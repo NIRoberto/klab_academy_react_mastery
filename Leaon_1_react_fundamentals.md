@@ -54,7 +54,7 @@ Modern React development relies heavily on ES6+ features. Understanding these co
 
 ### 1. Arrow Functions - The Modern Way
 
-**Theory:** Arrow functions provide a shorter syntax and lexically bind `this`, making them perfect for React event handlers and functional programming patterns.
+Arrow functions provide a shorter syntax and lexically bind `this`, making them perfect for React event handlers and functional programming patterns.
 
 **Key Differences:**
 - Shorter syntax
@@ -91,7 +91,7 @@ const complexFunction = (x, y) => {
 
 ### 2. Template Literals - String Interpolation
 
-**Theory:** Template literals use backticks (`) and allow embedded expressions with `${}` syntax, making string concatenation cleaner and more readable.
+Template literals use backticks (`) and allow embedded expressions with `${}` syntax, making string concatenation cleaner and more readable.
 
 ```javascript
 const name = "John";
@@ -122,7 +122,7 @@ const calculation = `The sum of 5 + 3 is ${5 + 3}`;
 
 ### 3. Destructuring - Extract Values Efficiently
 
-**Theory:** Destructuring allows unpacking values from arrays or properties from objects into distinct variables, reducing code verbosity.
+Destructuring allows unpacking values from arrays or properties from objects into distinct variables, reducing code verbosity.
 
 ```javascript
 // Array Destructuring
@@ -172,7 +172,7 @@ const { profile: { firstName, lastName } } = user;
 
 ### 4. Spread Operator - Copy and Merge
 
-**Theory:** The spread operator (`...`) expands iterables (arrays, objects) into individual elements, enabling immutable updates crucial for React state management.
+The spread operator (`...`) expands iterables (arrays, objects) into individual elements, enabling immutable updates crucial for React state management.
 
 ```javascript
 // Array Spreading
@@ -214,7 +214,7 @@ setUser({ ...user, name: "New Name" });
 
 ### 5. Modules - Code Organization
 
-**Theory:** ES6 modules allow you to split code into separate files and import/export functionality, promoting code reusability and maintainability.
+ES6 modules allow you to split code into separate files and import/export functionality, promoting code reusability and maintainability.
 
 ```javascript
 // math.js - Named exports
@@ -243,7 +243,7 @@ import * as MathUtils from './math.js';        // Namespace import
 
 ### 6. Variable Declarations - Scope and Mutability
 
-**Theory:** `let` and `const` provide block scope and better error prevention compared to `var`.
+`let` and `const` provide block scope and better error prevention compared to `var`.
 
 ```javascript
 // const - Cannot be reassigned
@@ -310,7 +310,7 @@ function Button() {
 
 ### The Virtual DOM Concept
 
-**Theory:** React uses a Virtual DOM - a JavaScript representation of the actual DOM. This enables:
+React uses a Virtual DOM - a JavaScript representation of the actual DOM. This enables:
 
 1. **Performance:** React can batch updates and minimize DOM manipulations
 2. **Predictability:** Changes are calculated before applying to real DOM
@@ -328,7 +328,7 @@ function Button() {
 
 ### 1. JSX - JavaScript XML
 
-**Theory:** JSX is a syntax extension that allows writing HTML-like code in JavaScript. It's transpiled to `React.createElement()` calls.
+JSX is a syntax extension that allows writing HTML-like code in JavaScript. It's transpiled to `React.createElement()` calls.
 
 **Why JSX?**
 - More readable than `createElement` calls
@@ -371,7 +371,7 @@ const element = (
 
 ### 2. Components - Building Blocks
 
-**Theory:** Components are independent, reusable pieces of UI. They accept inputs (props) and return JSX describing what should appear on screen.
+Components are independent, reusable pieces of UI. They accept inputs (props) and return JSX describing what should appear on screen.
 
 **Function Components (Modern Approach):**
 ```jsx
@@ -414,7 +414,7 @@ function App() {
 
 ### 3. Props - Data Flow
 
-**Theory:** Props (properties) are how data flows from parent to child components. They are read-only and enable component reusability.
+Props (properties) are how data flows from parent to child components. They are read-only and enable component reusability.
 
 **Key Principles:**
 - Props flow down (unidirectional data flow)
@@ -487,7 +487,7 @@ function UserProfile({ name, email, isAdmin = false }: UserProfileProps) {
 
 ### 4. State - Managing Dynamic Data
 
-**Theory:** State represents data that can change over time. When state changes, React re-renders the component to reflect the new state.
+State represents data that can change over time. When state changes, React re-renders the component to reflect the new state.
 
 **useState Hook:**
 ```jsx
