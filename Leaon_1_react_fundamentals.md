@@ -123,32 +123,30 @@ npm install      # Install all dependencies
 
 ### Installing Tailwind CSS in Vite + React
 
+**Official Documentation:** [Tailwind CSS with Vite](https://tailwindcss.com/docs/installation/using-vite)
+
 ```bash
-# Install Tailwind CSS
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
+# Install Tailwind CSS v4.1+
+npm install tailwindcss @tailwindcss/vite
 ```
 
-**Configure `tailwind.config.js`:**
+**Configure `vite.config.js`:**
 ```javascript
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),
   ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
+})
 ```
 
-**Add Tailwind directives to `src/index.css`:**
+**Add import to `src/index.css`:**
 ```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 ```
 
 **Sample Output:** Your app now has access to Tailwind's utility classes for rapid styling.
