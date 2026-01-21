@@ -627,7 +627,7 @@ function UserForm() {
 
 ### 5. Event Handling - User Interactions
 
-**Theory:** React uses SyntheticEvents - a wrapper around native DOM events that provides consistent behavior across browsers.
+React uses SyntheticEvents - a wrapper around native DOM events that provides consistent behavior across browsers.
 
 ```jsx
 function EventExamples() {
@@ -667,7 +667,7 @@ function EventExamples() {
 
 ### 6. Conditional Rendering - Dynamic UI
 
-**Theory:** Show different content based on application state or props using JavaScript conditional operators.
+Show different content based on application state or props using JavaScript conditional operators.
 
 ```jsx
 function ConditionalExamples({ user, isLoading, error }) {
@@ -747,7 +747,7 @@ function ConditionalExamples({ user, isLoading, error }) {
 
 ### 7. Lists and Keys - Rendering Collections
 
-**Theory:** When rendering lists, React needs keys to efficiently update the DOM when the list changes. Keys help React identify which items have changed, been added, or removed.
+When rendering lists, React needs keys to efficiently update the DOM when the list changes. Keys help React identify which items have changed, been added, or removed.
 
 ```jsx
 function TodoList({ todos }) {
@@ -820,7 +820,7 @@ const items = data.map(item => <Item key={Math.random()} data={item} />);
 
 ### useEffect Hook - Side Effects
 
-**Theory:** useEffect handles side effects in functional components - operations that affect something outside the component scope.
+useEffect handles side effects in functional components - operations that affect something outside the component scope.
 
 **Common Use Cases:**
 - Data fetching
@@ -868,7 +868,7 @@ function EffectExamples() {
 
 ### useRef Hook - Direct DOM Access
 
-**Theory:** useRef provides a way to access DOM elements directly or store mutable values that persist across renders without causing re-renders.
+useRef provides a way to access DOM elements directly or store mutable values that persist across renders without causing re-renders.
 
 ```jsx
 import { useRef, useEffect } from 'react';
