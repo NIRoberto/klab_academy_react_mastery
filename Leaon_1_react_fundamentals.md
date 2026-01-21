@@ -1,13 +1,121 @@
 # Complete React Fundamentals Guide for Beginners
 
 ## Table of Contents
-1. [Setup with Tailwind CSS](#setup-with-tailwind-css)
-2. [Prerequisites: ES6 Fundamentals](#prerequisites-es6-fundamentals)
-3. [Understanding React](#understanding-react)
-4. [React Core Concepts](#react-core-concepts)
-5. [Working with the DOM](#working-with-the-dom)
-6. [Practical Exercises with Styling](#practical-exercises-with-styling)
-7. [Best Practices](#best-practices)
+1. [React Project Setup](#react-project-setup)
+2. [Understanding package.json](#understanding-packagejson)
+3. [Setup with Tailwind CSS](#setup-with-tailwind-css)
+4. [Prerequisites: ES6 Fundamentals](#prerequisites-es6-fundamentals)
+5. [Understanding React](#understanding-react)
+6. [React Core Concepts](#react-core-concepts)
+7. [Working with the DOM](#working-with-the-dom)
+8. [Practical Exercises with Styling](#practical-exercises-with-styling)
+9. [Best Practices](#best-practices)
+
+---
+
+## React Project Setup
+
+### Prerequisites
+- **Node.js** (version 18+) - [Download here](https://nodejs.org/)
+- **Code editor** (VS Code recommended)
+
+### Create and Run Your First React App
+
+**We'll use JavaScript (not TypeScript) for this tutorial to keep it simple for beginners.**
+
+**Step 1: Create Project (JavaScript)**
+```bash
+npm create vite@latest my-react-app -- --template react
+```
+
+**Alternative: If you want TypeScript later**
+```bash
+npm create vite@latest my-react-app -- --template react-ts
+```
+
+**Step 2: Navigate and Install**
+```bash
+cd my-react-app
+npm install
+```
+
+**Step 3: Start Development Server**
+```bash
+npm run dev
+```
+
+**Step 4: Open in Browser**
+Open `http://localhost:5173/` - You'll see your React app running!
+
+**Sample Output:**
+```
+  VITE v4.4.5  ready in 500 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+```
+
+### Project Structure (What You Need to Know)
+```
+my-react-app/
+├── src/
+│   ├── App.jsx          # Main component (JavaScript + JSX)
+│   └── main.jsx         # Entry point
+├── public/
+│   └── index.html       # HTML template
+└── package.json         # Project info
+```
+
+**File Extensions:**
+- `.jsx` = JavaScript + JSX (what we're using)
+- `.tsx` = TypeScript + JSX (for TypeScript projects)
+
+**That's it!** Your React app is now running with JavaScript. You can start editing `src/App.jsx` to see changes instantly.
+
+---
+
+## Understanding package.json
+
+### What is package.json?
+The `package.json` file contains your project's configuration, dependencies, and scripts.
+
+### Key Sections You Need to Know
+
+**Scripts (Commands you can run):**
+```json
+{
+  "scripts": {
+    "dev": "vite",           # Start development server
+    "build": "vite build"    # Build for production
+  }
+}
+```
+
+**Dependencies (Libraries your app uses):**
+```json
+{
+  "dependencies": {
+    "react": "^18.2.0",      # React library
+    "react-dom": "^18.2.0"   # React DOM rendering
+  }
+}
+```
+
+### Adding New Packages
+```bash
+# Install a new package
+npm install package-name
+
+# Example: Install axios for API calls
+npm install axios
+```
+
+### Common Commands
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm install      # Install all dependencies
+```
 
 ---
 
