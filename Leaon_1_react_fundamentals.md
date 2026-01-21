@@ -624,7 +624,7 @@ function UserForm() {
 ```
 *Professional form with labels, styled inputs, and focus states*
 ```
-
+```
 ### 5. Event Handling - User Interactions
 
 React uses SyntheticEvents - a wrapper around native DOM events that provides consistent behavior across browsers.
@@ -744,7 +744,7 @@ function ConditionalExamples({ user, isLoading, error }) {
 ```
 *Dynamic UI with loading spinner, error states, and conditional content*
 ```
-
+```
 ### 7. Lists and Keys - Rendering Collections
 
 When rendering lists, React needs keys to efficiently update the DOM when the list changes. Keys help React identify which items have changed, been added, or removed.
@@ -815,7 +815,7 @@ const items = data.map(item => <Item key={Math.random()} data={item} />);
 ```
 
 ---
-
+```
 ## Working with the DOM
 
 ### useEffect Hook - Side Effects
