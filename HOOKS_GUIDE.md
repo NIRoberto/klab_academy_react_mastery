@@ -25,24 +25,69 @@ The `useState` Hook allows you to add state to functional components. It returns
 const [state, setState] = useState(initialValue);
 ```
 
-### Usage Example
-```typescript
-import { useState } from 'react';
+### Four Small Examples
 
+#### Example 1: Simple Counter
+```typescript
 const Counter = () => {
   const [count, setCount] = useState(0);
-  const [name, setName] = useState('');
-
   return (
     <div>
       <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-      
+      <button onClick={() => setCount(count + 1)}>+</button>
+    </div>
+  );
+};
+```
+
+#### Example 2: Toggle Boolean
+```typescript
+const Toggle = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  return (
+    <div>
+      <button onClick={() => setIsVisible(!isVisible)}>Toggle</button>
+      {isVisible && <p>Now you see me!</p>}
+    </div>
+  );
+};
+```
+
+#### Example 3: Form Input
+```typescript
+const NameForm = () => {
+  const [name, setName] = useState('');
+  return (
+    <div>
       <input 
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Enter name"
+        placeholder="Enter your name"
       />
+      <p>Hello, {name}!</p>
+    </div>
+  );
+};
+```
+
+#### Example 4: Array State
+```typescript
+const TodoList = () => {
+  const [todos, setTodos] = useState<string[]>([]);
+  const [input, setInput] = useState('');
+  
+  const addTodo = () => {
+    setTodos([...todos, input]);
+    setInput('');
+  };
+  
+  return (
+    <div>
+      <input value={input} onChange={(e) => setInput(e.target.value)} />
+      <button onClick={addTodo}>Add</button>
+      <ul>
+        {todos.map((todo, i) => <li key={i}>{todo}</li>)}
+      </ul>
     </div>
   );
 };
@@ -68,42 +113,68 @@ useEffect(() => {
 }, [dependencies]); // Dependencies array (optional)
 ```
 
-### Usage Example
+### Four Small Examples
+
+#### Example 1: Data Fetching
 ```typescript
-import { useState, useEffect } from 'react';
-
-const UserProfile = ({ userId }: { userId: number }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // Effect runs on mount and when userId changes
-  useEffect(() => {
-    const fetchUser = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`/api/users/${userId}`);
-        const userData = await response.json();
-        setUser(userData);
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [userId]);
-
-  // Effect for cleanup (runs on unmount)
-  useEffect(() => {
-    return () => {
-      console.log('Component unmounting');
-    };
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
+const UserList = () => {
+  const [users, setUsers] = useState([]);
   
-  return <div>User: {user?.name}</div>;
+  useEffect(() => {
+    fetch('/api/users')
+      .then(res => res.json())
+      .then(setUsers);
+  }, []);
+  
+  return <ul>{users.map(user => <li key={user.id}>{user.name}</li>)}</ul>;
+};
+```
+
+#### Example 2: Document Title
+```typescript
+const PageTitle = ({ title }: { title: string }) => {
+  useEffect(() => {
+    document.title = title;
+  }, [title]);
+  
+  return <h1>{title}</h1>;
+};
+```
+
+#### Example 3: Timer/Interval
+```typescript
+const Timer = () => {
+  const [seconds, setSeconds] = useState(0);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds(s => s + 1);
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  return <p>Timer: {seconds}s</p>;
+};
+```
+
+#### Example 4: Event Listener
+```typescript
+const WindowSize = () => {
+  const [size, setSize] = useState({ width: 0, height: 0 });
+  
+  useEffect(() => {
+    const updateSize = () => {
+      setSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    
+    window.addEventListener('resize', updateSize);
+    updateSize();
+    
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+  
+  return <p>Size: {size.width} x {size.height}</p>;
 };
 ```
 
@@ -122,52 +193,50 @@ The `useContext` Hook allows you to consume context values without wrapping comp
 const value = useContext(MyContext);
 ```
 
-### Usage Example
+### Four Small Examples
+
+#### Example 1: Theme Context
 ```typescript
-import { createContext, useContext, useState } from 'react';
+const ThemeContext = createContext('light');
 
-// Create context
-const ThemeContext = createContext<{
-  theme: string;
-  toggleTheme: () => void;
-} | undefined>(undefined);
-
-// Provider component
-const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setTheme] = useState('light');
-  
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  };
-
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-};
-
-// Consumer component
 const ThemedButton = () => {
-  const context = useContext(ThemeContext);
-  
-  if (!context) {
-    throw new Error('ThemedButton must be used within ThemeProvider');
-  }
-  
-  const { theme, toggleTheme } = context;
-
+  const theme = useContext(ThemeContext);
   return (
-    <button 
-      onClick={toggleTheme}
-      style={{ 
-        backgroundColor: theme === 'light' ? '#fff' : '#333',
-        color: theme === 'light' ? '#333' : '#fff'
-      }}
-    >
-      Current theme: {theme}
+    <button style={{ background: theme === 'dark' ? '#333' : '#fff' }}>
+      Themed Button
     </button>
   );
+};
+```
+
+#### Example 2: User Context
+```typescript
+const UserContext = createContext(null);
+
+const UserProfile = () => {
+  const user = useContext(UserContext);
+  return user ? <p>Welcome, {user.name}!</p> : <p>Please log in</p>;
+};
+```
+
+#### Example 3: Language Context
+```typescript
+const LanguageContext = createContext('en');
+
+const Greeting = () => {
+  const lang = useContext(LanguageContext);
+  const greetings = { en: 'Hello', es: 'Hola', fr: 'Bonjour' };
+  return <h1>{greetings[lang]}</h1>;
+};
+```
+
+#### Example 4: Settings Context
+```typescript
+const SettingsContext = createContext({ notifications: true });
+
+const NotificationBell = () => {
+  const { notifications } = useContext(SettingsContext);
+  return notifications ? <span>🔔</span> : <span>🔕</span>;
 };
 ```
 
@@ -186,67 +255,105 @@ The `useReducer` Hook is an alternative to `useState` for managing complex state
 const [state, dispatch] = useReducer(reducer, initialState);
 ```
 
-### Usage Example
+### Four Small Examples
+
+#### Example 1: Simple Counter
 ```typescript
-import { useReducer } from 'react';
+type Action = { type: 'increment' } | { type: 'decrement' } | { type: 'reset' };
 
-// Define state and action types
-interface State {
-  count: number;
-  step: number;
-}
-
-type Action = 
-  | { type: 'increment' }
-  | { type: 'decrement' }
-  | { type: 'set_step'; payload: number }
-  | { type: 'reset' };
-
-// Reducer function
-const counterReducer = (state: State, action: Action): State => {
+const counterReducer = (state: number, action: Action) => {
   switch (action.type) {
-    case 'increment':
-      return { ...state, count: state.count + state.step };
-    case 'decrement':
-      return { ...state, count: state.count - state.step };
-    case 'set_step':
-      return { ...state, step: action.payload };
-    case 'reset':
-      return { count: 0, step: 1 };
-    default:
-      return state;
+    case 'increment': return state + 1;
+    case 'decrement': return state - 1;
+    case 'reset': return 0;
+    default: return state;
   }
 };
 
 const Counter = () => {
-  const [state, dispatch] = useReducer(counterReducer, { count: 0, step: 1 });
-
+  const [count, dispatch] = useReducer(counterReducer, 0);
   return (
     <div>
-      <p>Count: {state.count}</p>
-      <p>Step: {state.step}</p>
-      
-      <button onClick={() => dispatch({ type: 'increment' })}>
-        +{state.step}
-      </button>
-      <button onClick={() => dispatch({ type: 'decrement' })}>
-        -{state.step}
-      </button>
-      
-      <input 
-        type="number"
-        value={state.step}
-        onChange={(e) => dispatch({ 
-          type: 'set_step', 
-          payload: Number(e.target.value) 
-        })}
-      />
-      
-      <button onClick={() => dispatch({ type: 'reset' })}>
-        Reset
-      </button>
+      <p>Count: {count}</p>
+      <button onClick={() => dispatch({ type: 'increment' })}>+</button>
+      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>
+      <button onClick={() => dispatch({ type: 'reset' })}>Reset</button>
     </div>
   );
+};
+```
+
+#### Example 2: Todo List
+```typescript
+type Todo = { id: number; text: string; done: boolean };
+type TodoAction = 
+  | { type: 'add'; text: string }
+  | { type: 'toggle'; id: number }
+  | { type: 'delete'; id: number };
+
+const todoReducer = (todos: Todo[], action: TodoAction): Todo[] => {
+  switch (action.type) {
+    case 'add':
+      return [...todos, { id: Date.now(), text: action.text, done: false }];
+    case 'toggle':
+      return todos.map(todo => 
+        todo.id === action.id ? { ...todo, done: !todo.done } : todo
+      );
+    case 'delete':
+      return todos.filter(todo => todo.id !== action.id);
+    default:
+      return todos;
+  }
+};
+```
+
+#### Example 3: Form State
+```typescript
+type FormState = { name: string; email: string; errors: string[] };
+type FormAction = 
+  | { type: 'setName'; value: string }
+  | { type: 'setEmail'; value: string }
+  | { type: 'setErrors'; errors: string[] };
+
+const formReducer = (state: FormState, action: FormAction): FormState => {
+  switch (action.type) {
+    case 'setName': return { ...state, name: action.value };
+    case 'setEmail': return { ...state, email: action.value };
+    case 'setErrors': return { ...state, errors: action.errors };
+    default: return state;
+  }
+};
+```
+
+#### Example 4: Shopping Cart
+```typescript
+type CartItem = { id: number; name: string; price: number; quantity: number };
+type CartAction = 
+  | { type: 'add'; item: Omit<CartItem, 'quantity'> }
+  | { type: 'remove'; id: number }
+  | { type: 'updateQuantity'; id: number; quantity: number };
+
+const cartReducer = (items: CartItem[], action: CartAction): CartItem[] => {
+  switch (action.type) {
+    case 'add':
+      const existing = items.find(item => item.id === action.item.id);
+      if (existing) {
+        return items.map(item => 
+          item.id === action.item.id 
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...items, { ...action.item, quantity: 1 }];
+    case 'remove':
+      return items.filter(item => item.id !== action.id);
+    case 'updateQuantity':
+      return items.map(item => 
+        item.id === action.id ? { ...item, quantity: action.quantity } : item
+      );
+    default:
+      return items;
+  }
 };
 ```
 
