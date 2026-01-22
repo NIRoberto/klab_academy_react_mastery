@@ -1,6 +1,7 @@
 # Lesson 2: React Styling, Images, Packages & Architecture
 
 ## Table of Contents
+
 1. [Styling in React with Tailwind CSS](#styling-in-react-with-tailwind-css)
 2. [Images in React](#images-in-react)
 3. [Popular React Packages](#popular-react-packages)
@@ -16,6 +17,7 @@
 Tailwind CSS is a **utility-first** CSS framework that provides low-level utility classes to build custom designs directly in your markup. Instead of writing custom CSS, you compose small utility classes to create complex components.
 
 **Key Benefits:**
+
 - **Rapid Development**: Build UIs faster with pre-built classes
 - **Consistent Design**: Built-in design system with spacing, colors, typography
 - **Responsive by Default**: Mobile-first responsive design utilities
@@ -23,6 +25,7 @@ Tailwind CSS is a **utility-first** CSS framework that provides low-level utilit
 - **Small Bundle Size**: Only includes CSS for classes you actually use
 
 **Utility-First Approach:**
+
 ```jsx
 // Traditional CSS approach
 .btn-primary {
@@ -42,14 +45,17 @@ Tailwind CSS is a **utility-first** CSS framework that provides low-level utilit
 ### Basic Tailwind CSS Usage
 
 **Simple Component Styling:**
+
 ```jsx
-function Button({ children, variant = 'primary' }) {
-  const baseClasses = "px-4 py-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2";
+function Button({ children, variant = "primary" }) {
+  const baseClasses =
+    "px-4 py-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2";
   const variants = {
     primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
-    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500",
+    secondary:
+      "bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500",
     danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
-    success: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500"
+    success: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500",
   };
 
   return (
@@ -65,16 +71,19 @@ function Button({ children, variant = 'primary' }) {
   <Button variant="secondary">Cancel</Button>
   <Button variant="danger">Delete</Button>
   <Button variant="success">Approve</Button>
-</div>
+</div>;
 ```
 
 **Sample Output:**
+
 ```
 [Save] [Cancel] [Delete] [Approve]
 ```
-*Four styled buttons with different color schemes, hover effects, and focus states*
+
+_Four styled buttons with different color schemes, hover effects, and focus states_
 
 ### Responsive Design
+
 ```jsx
 function ResponsiveCard() {
   return (
@@ -85,17 +94,26 @@ function ResponsiveCard() {
             <span className="text-white font-bold text-lg">JD</span>
           </div>
           <div className="ml-4">
-            <h3 className="text-lg md:text-xl font-bold text-gray-800">John Doe</h3>
+            <h3 className="text-lg md:text-xl font-bold text-gray-800">
+              John Doe
+            </h3>
             <p className="text-sm text-gray-500">Software Developer</p>
           </div>
         </div>
         <p className="text-sm md:text-base text-gray-600 mb-4">
-          Passionate about creating amazing user experiences with modern web technologies.
+          Passionate about creating amazing user experiences with modern web
+          technologies.
         </p>
         <div className="flex flex-wrap gap-2">
-          <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">React</span>
-          <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Node.js</span>
-          <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">TypeScript</span>
+          <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+            React
+          </span>
+          <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+            Node.js
+          </span>
+          <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
+            TypeScript
+          </span>
         </div>
       </div>
     </div>
@@ -104,18 +122,22 @@ function ResponsiveCard() {
 ```
 
 **Sample Output (Desktop):**
+
 ```
 
 ```
-*Professional profile card with avatar, responsive text sizing, and skill tags*
+
+_Professional profile card with avatar, responsive text sizing, and skill tags_
 
 **Responsive Breakpoints:**
+
 - `sm:` - Small screens (640px+)
-- `md:` - Medium screens (768px+) 
+- `md:` - Medium screens (768px+)
 - `lg:` - Large screens (1024px+)
 - `xl:` - Extra large screens (1280px+)
 
 ### Dynamic Classes
+
 ```jsx
 function StatusBadge({ status }) {
   const getStatusClasses = (status) => {
@@ -123,7 +145,7 @@ function StatusBadge({ status }) {
     const statusClasses = {
       active: "bg-green-100 text-green-800",
       inactive: "bg-red-100 text-red-800",
-      pending: "bg-yellow-100 text-yellow-800"
+      pending: "bg-yellow-100 text-yellow-800",
     };
     return `${baseClasses} ${statusClasses[status]}`;
   };
@@ -139,6 +161,7 @@ function StatusBadge({ status }) {
 ### Advanced Tailwind Patterns
 
 **Complex Dashboard Layout:**
+
 ```jsx
 function Dashboard() {
   return (
@@ -167,27 +190,55 @@ function Dashboard() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[
-            { title: 'Total Users', value: '12,345', change: '+12%', color: 'blue' },
-            { title: 'Revenue', value: '$45,678', change: '+8%', color: 'green' },
-            { title: 'Orders', value: '1,234', change: '-3%', color: 'red' },
-            { title: 'Conversion', value: '3.2%', change: '+0.5%', color: 'purple' }
+            {
+              title: "Total Users",
+              value: "12,345",
+              change: "+12%",
+              color: "blue",
+            },
+            {
+              title: "Revenue",
+              value: "$45,678",
+              change: "+8%",
+              color: "green",
+            },
+            { title: "Orders", value: "1,234", change: "-3%", color: "red" },
+            {
+              title: "Conversion",
+              value: "3.2%",
+              change: "+0.5%",
+              color: "purple",
+            },
           ].map((stat, index) => (
-            <div key={index} className="bg-white overflow-hidden shadow-sm rounded-lg">
+            <div
+              key={index}
+              className="bg-white overflow-hidden shadow-sm rounded-lg"
+            >
               <div className="p-6">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className={`w-8 h-8 bg-${stat.color}-500 rounded-md flex items-center justify-center`}>
+                    <div
+                      className={`w-8 h-8 bg-${stat.color}-500 rounded-md flex items-center justify-center`}
+                    >
                       <div className="w-4 h-4 bg-white rounded-sm"></div>
                     </div>
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">{stat.title}</dt>
+                      <dt className="text-sm font-medium text-gray-500 truncate">
+                        {stat.title}
+                      </dt>
                       <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-gray-900">{stat.value}</div>
-                        <div className={`ml-2 flex items-baseline text-sm font-semibold ${
-                          stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'
-                        }`}>
+                        <div className="text-2xl font-semibold text-gray-900">
+                          {stat.value}
+                        </div>
+                        <div
+                          className={`ml-2 flex items-baseline text-sm font-semibold ${
+                            stat.change.startsWith("+")
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
+                        >
                           {stat.change}
                         </div>
                       </dd>
@@ -204,7 +255,9 @@ function Dashboard() {
           {/* Chart Area */}
           <div className="lg:col-span-2">
             <div className="bg-white shadow-sm rounded-lg p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Analytics Overview</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Analytics Overview
+              </h3>
               <div className="h-64 bg-gradient-to-r from-blue-50 to-indigo-100 rounded-lg flex items-center justify-center">
                 <p className="text-gray-500">Chart Component Here</p>
               </div>
@@ -213,17 +266,33 @@ function Dashboard() {
 
           {/* Recent Activity */}
           <div className="bg-white shadow-sm rounded-lg p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Activity</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Recent Activity
+            </h3>
             <div className="space-y-4">
               {[
-                { user: 'John Doe', action: 'Created new project', time: '2 hours ago' },
-                { user: 'Jane Smith', action: 'Updated profile', time: '4 hours ago' },
-                { user: 'Mike Johnson', action: 'Completed task', time: '6 hours ago' }
+                {
+                  user: "John Doe",
+                  action: "Created new project",
+                  time: "2 hours ago",
+                },
+                {
+                  user: "Jane Smith",
+                  action: "Updated profile",
+                  time: "4 hours ago",
+                },
+                {
+                  user: "Mike Johnson",
+                  action: "Completed task",
+                  time: "6 hours ago",
+                },
               ].map((activity, index) => (
                 <div key={index} className="flex items-start space-x-3">
                   <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0"></div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-900">{activity.user}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {activity.user}
+                    </p>
                     <p className="text-sm text-gray-500">{activity.action}</p>
                     <p className="text-xs text-gray-400">{activity.time}</p>
                   </div>
@@ -239,54 +308,33 @@ function Dashboard() {
 ```
 
 **Sample Output:**
-```
-┌────────────────────────────────────────────────────────────────────────────────┐
-│ Dashboard                                           🔔 👤              │
-│────────────────────────────────────────────────────────────────────────────────│
-│                                                                              │
-│ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ │
-│ │ Total Users      │ │ Revenue          │ │ Orders           │ │ Conversion       │ │
-│ │ 12,345    +12%   │ │ $45,678    +8%   │ │ 1,234      -3%   │ │ 3.2%      +0.5% │ │
-│ └─────────────────┘ └─────────────────┘ └─────────────────┘ └─────────────────┘ │
-│                                                                              │
-│ ┌─────────────────────────────────────────────────┐ ┌─────────────────────────┐ │
-│ │ Analytics Overview                           │ │ Recent Activity        │ │
-│ │                                             │ │                        │ │
-│ │        [Chart Component Here]              │ │ • John Doe              │ │
-│ │                                             │ │   Created new project   │ │
-│ │                                             │ │   2 hours ago           │ │
-│ └─────────────────────────────────────────────────┘ │ • Jane Smith            │ │
-│                                                                │   Updated profile       │ │
-│                                                                └─────────────────────────┘ │
-└────────────────────────────────────────────────────────────────────────────────┘
-```
-*Complete dashboard layout with header, stats grid, chart area, and activity feed*
 
----
+```
+
+```
+
+## _Complete dashboard layout with header, stats grid, chart area, and activity feed_
 
 ## Images in React
 
 ### Importing and Using Images
 
 **Static Images:**
+
 ```jsx
 // Import image
-import heroImage from '../assets/hero.jpg';
-import logo from '../assets/logo.png';
+import heroImage from "../assets/hero.jpg";
+import logo from "../assets/logo.png";
 
 function Header() {
   return (
     <header className="bg-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex items-center">
-        <img 
-          src={logo} 
-          alt="Company Logo" 
-          className="h-10 w-auto"
-        />
+        <img src={logo} alt="Company Logo" className="h-10 w-auto" />
         <nav className="ml-auto">
-          <img 
-            src={heroImage} 
-            alt="Hero" 
+          <img
+            src={heroImage}
+            alt="Hero"
             className="w-full h-64 object-cover rounded-lg"
           />
         </nav>
@@ -297,10 +345,11 @@ function Header() {
 ```
 
 ### Dynamic Images
+
 ```jsx
 function UserAvatar({ user }) {
   const [imageError, setImageError] = useState(false);
-  
+
   const handleImageError = () => {
     setImageError(true);
   };
@@ -308,8 +357,8 @@ function UserAvatar({ user }) {
   return (
     <div className="relative">
       {!imageError ? (
-        <img 
-          src={user.avatar || '/default-avatar.png'}
+        <img
+          src={user.avatar || "/default-avatar.png"}
           alt={`${user.name}'s avatar`}
           className="w-12 h-12 rounded-full object-cover"
           onError={handleImageError}
@@ -327,6 +376,7 @@ function UserAvatar({ user }) {
 ```
 
 ### Image Gallery Component
+
 ```jsx
 function ImageGallery({ images }) {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -344,7 +394,7 @@ function ImageGallery({ images }) {
           />
         ))}
       </div>
-      
+
       {selectedImage && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
           <div className="relative max-w-4xl max-h-full p-4">
@@ -369,76 +419,408 @@ function ImageGallery({ images }) {
 
 ---
 
+## State vs Props - Understanding Data Flow
+
+### What are Props?
+
+Props (properties) are how you pass data **from parent to child** components. Think of props like function parameters - they're inputs that make components reusable.
+
+**Key Rules:**
+
+- Props flow **downward** (parent → child)
+- Props are **read-only** (cannot be changed by child)
+- Props make components **reusable** with different data
+
+```jsx
+// Parent Component
+function App() {
+  const user = {
+    name: "Alice Johnson",
+    email: "alice@example.com",
+    role: "Developer",
+    isOnline: true,
+  };
+
+  return (
+    <div className="p-6">
+      <UserCard
+        name={user.name}
+        email={user.email}
+        role={user.role}
+        isOnline={user.isOnline}
+      />
+
+      {/* Same component, different data */}
+      <UserCard
+        name="Bob Smith"
+        email="bob@example.com"
+        role="Designer"
+        isOnline={false}
+      />
+    </div>
+  );
+}
+
+// Child Component - Receives props
+function UserCard({ name, email, role, isOnline }) {
+  return (
+    <div className="bg-white p-4 rounded-lg shadow-md border">
+      <div className="flex items-center mb-3">
+        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+          {name.charAt(0)}
+        </div>
+        <div className="ml-3">
+          <h3 className="font-bold text-gray-800">{name}</h3>
+          <p className="text-sm text-gray-600">{role}</p>
+        </div>
+        <div
+          className={`ml-auto w-3 h-3 rounded-full ${
+            isOnline ? "bg-green-500" : "bg-gray-400"
+          }`}
+        ></div>
+      </div>
+      <p className="text-gray-700">{email}</p>
+    </div>
+  );
+}
+```
+
+**Sample Output:**
+
+```
+┌─────────────────────────────────────┐
+│ (A) Alice Johnson          ●        │
+│     Developer                       │
+│                                     │
+│ alice@example.com                   │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│ (B) Bob Smith              ○        │
+│     Designer                        │
+│                                     │
+│ bob@example.com                     │
+└─────────────────────────────────────┘
+```
+
+_Two user cards with different data, green dot = online, gray dot = offline_
+
+### What is State?
+
+State is **internal data** that a component manages and can change over time. When state changes, the component re-renders to show the new data.
+
+**Key Rules:**
+
+- State is **private** to the component
+- State can **change** over time
+- Changing state **triggers re-render**
+- Use `useState` hook to manage state
+
+```jsx
+import { useState } from "react";
+
+function ShoppingCart() {
+  // State: data that can change
+  const [items, setItems] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const addItem = (product) => {
+    const newItems = [...items, { ...product, id: Date.now() }];
+    setItems(newItems);
+    setTotal(total + product.price);
+  };
+
+  const removeItem = (id) => {
+    const newItems = items.filter((item) => item.id !== id);
+    const removedItem = items.find((item) => item.id === id);
+    setItems(newItems);
+    setTotal(total - removedItem.price);
+  };
+
+  return (
+    <div className="relative">
+      {/* Cart Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+      >
+        <span>🛒</span>
+        <span>Cart ({items.length})</span>
+        <span>${total.toFixed(2)}</span>
+      </button>
+
+      {/* Cart Dropdown */}
+      {isOpen && (
+        <div className="absolute top-12 right-0 bg-white border rounded-lg shadow-lg p-4 w-80">
+          <h3 className="font-bold mb-3">Shopping Cart</h3>
+
+          {items.length === 0 ? (
+            <p className="text-gray-500">Your cart is empty</p>
+          ) : (
+            <div className="space-y-2">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center p-2 border-b"
+                >
+                  <div>
+                    <p className="font-medium">{item.name}</p>
+                    <p className="text-sm text-gray-600">${item.price}</p>
+                  </div>
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <div className="pt-2 border-t font-bold">
+                Total: ${total.toFixed(2)}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Product Buttons */}
+      <div className="mt-4 space-x-2">
+        <button
+          onClick={() => addItem({ name: "T-Shirt", price: 19.99 })}
+          className="bg-green-600 text-white px-3 py-1 rounded"
+        >
+          Add T-Shirt ($19.99)
+        </button>
+        <button
+          onClick={() => addItem({ name: "Jeans", price: 49.99 })}
+          className="bg-green-600 text-white px-3 py-1 rounded"
+        >
+          Add Jeans ($49.99)
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+**Sample Output (Cart Open):**
+
+```
+┌─────────────────────────────────────┐
+│ 🛒 Cart (2) $69.98                  │
+└─────────────────────────────────────┘
+  ┌───────────────────────────────────┐
+  │ Shopping Cart                     │
+  │                                   │
+  │ T-Shirt              [Remove]     │
+  │ $19.99                            │
+  │ ─────────────────────────────────  │
+  │ Jeans                [Remove]     │
+  │ $49.99                            │
+  │ ─────────────────────────────────  │
+  │ Total: $69.98                     │
+  └───────────────────────────────────┘
+
+[Add T-Shirt ($19.99)] [Add Jeans ($49.99)]
+```
+
+_Interactive shopping cart with state management_
+
+### State vs Props - Key Differences
+
+| Aspect                 | State                    | Props                       |
+| ---------------------- | ------------------------ | --------------------------- |
+| **Ownership**          | Owned by component       | Passed from parent          |
+| **Mutability**         | Can be changed           | Read-only                   |
+| **Purpose**            | Internal data management | Data passing                |
+| **Triggers Re-render** | Yes, when changed        | Yes, when parent updates    |
+| **Example**            | `useState(0)`            | `<Component name="John" />` |
+
+### Combining State and Props
+
+Real applications use both state and props together:
+
+```jsx
+// Parent with state
+function TodoApp() {
+  const [todos, setTodos] = useState([
+    { id: 1, text: "Learn React", completed: false },
+    { id: 2, text: "Build an app", completed: true },
+  ]);
+
+  const toggleTodo = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+
+  return (
+    <div className="max-w-md mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-4">My Todos</h1>
+      {todos.map((todo) => (
+        <TodoItem
+          key={todo.id}
+          todo={todo} // Props: passing data down
+          onToggle={toggleTodo} // Props: passing function down
+        />
+      ))}
+    </div>
+  );
+}
+
+// Child component receives props
+function TodoItem({ todo, onToggle }) {
+  return (
+    <div
+      className={`flex items-center p-3 rounded-lg mb-2 ${
+        todo.completed ? "bg-green-100" : "bg-gray-100"
+      }`}
+    >
+      <input
+        type="checkbox"
+        checked={todo.completed}
+        onChange={() => onToggle(todo.id)} // Calls parent function
+        className="mr-3"
+      />
+      <span
+        className={`flex-1 ${
+          todo.completed ? "line-through text-gray-500" : "text-gray-800"
+        }`}
+      >
+        {todo.text}
+      </span>
+    </div>
+  );
+}
+```
+
+**Sample Output:**
+
+```
+┌─────────────────────────────────────┐
+│ My Todos                            │
+│                                     │
+│ ☐ Learn React                       │
+│ ☑ Build an app                      │
+└─────────────────────────────────────┘
+```
+
+_Todo list showing state management and props passing_
+
+### Best Practices
+
+**1. Keep State Local**
+
+- Only lift state up when multiple components need it
+- Start with local state, move up as needed
+
+**2. Props Naming**
+
+- Use descriptive names: `userName` not `name`
+- Use `onAction` for function props: `onSubmit`, `onClick`
+
+**3. State Updates**
+
+- Always use setter function: `setCount(count + 1)`
+- For objects/arrays, create new copies: `setUser({...user, name: 'New Name'})`
+
+**4. Component Responsibility**
+
+- Parent manages state, children display data
+- Children communicate up through function props
+- Keep components focused on single responsibility
+
+---
+
 ## Popular React Packages
 
 ### Essential Packages for React Projects
 
 **1. React Router - Navigation**
+
 ```bash
 npm install react-router-dom
 ```
 
 **2. Axios - HTTP Requests**
+
 ```bash
 npm install axios
 ```
 
 **3. React Hook Form - Form Handling**
+
 ```bash
 npm install react-hook-form
 ```
 
 **4. React Query/TanStack Query - Data Fetching**
+
 ```bash
 npm install @tanstack/react-query
 ```
 
 **5. Zustand - State Management**
+
 ```bash
 npm install zustand
 ```
 
 **6. React Hot Toast - Notifications**
+
 ```bash
 npm install react-hot-toast
 ```
 
 **7. Date-fns - Date Utilities**
+
 ```bash
 npm install date-fns
 ```
 
 **8. Framer Motion - Animations**
+
 ```bash
 npm install framer-motion
 ```
 
 **9. React Icons - Icon Library**
+
 ```bash
 npm install react-icons
 ```
 
 **10. Lucide React - Modern Icons**
+
 ```bash
 npm install lucide-react
 ```
 
 **11. Heroicons - Tailwind UI Icons**
+
 ```bash
 npm install @heroicons/react
 ```
 
-
-
-
 ### Package Usage Examples
 
 **Using Icons:**
+
 ```jsx
-import { FaUser, FaEnvelope, FaPhone, FaGithub, FaHeart, FaStar } from 'react-icons/fa';
-import { HiHome, HiUser, HiMail, HiCog } from 'react-icons/hi';
-import { Search, Bell, Settings, Menu, X } from 'lucide-react';
-import { UserIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
+import {
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaGithub,
+  FaHeart,
+  FaStar,
+} from "react-icons/fa";
+import { HiHome, HiUser, HiMail, HiCog } from "react-icons/hi";
+import { Search, Bell, Settings, Menu, X } from "lucide-react";
+import { UserIcon, EnvelopeIcon, PhoneIcon } from "@heroicons/react/24/outline";
 
 function IconExamples() {
   return (
@@ -469,12 +851,12 @@ function IconExamples() {
           <EnvelopeIcon className="h-5 w-5" />
           <span>Send Email</span>
         </button>
-        
+
         <button className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
           <PhoneIcon className="h-5 w-5" />
           <span>Call Now</span>
         </button>
-        
+
         <button className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
           <FaGithub className="h-5 w-5" />
           <span>View Code</span>
@@ -517,50 +899,45 @@ function IconExamples() {
 }
 ```
 
-**Sample Output:**
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│ 🏠    👤 Profile    ✉️ Messages              🔍 🔔 ⚙️                │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                         │
-│ [✉️ Send Email] [📞 Call Now] [🐙 View Code]                          │
-│                                                                         │
-│ (👤) (🐙) (❤️)                                                        │
-│                                                                         │
-│ Rating: ⭐⭐⭐⭐⭐ (4.8)                                                │
-│                                                                         │
-│ Mobile Menu                                               [☰]          │
-└─────────────────────────────────────────────────────────────────────────┘
+
 ```
-*Navigation bar, action buttons, social icons, rating stars, and mobile menu toggle*
+
+_Navigation bar, action buttons, social icons, rating stars, and mobile menu toggle_
 
 **React Hot Toast - Notifications:**
+
 ```jsx
-import toast, { Toaster } from 'react-hot-toast';
-import { FaCheck, FaExclamationTriangle, FaInfo, FaTimes } from 'react-icons/fa';
+import toast, { Toaster } from "react-hot-toast";
+import {
+  FaCheck,
+  FaExclamationTriangle,
+  FaInfo,
+  FaTimes,
+} from "react-icons/fa";
 
 function ToastExamples() {
   // Basic toast notifications
   const showSuccess = () => {
-    toast.success('Successfully saved!', {
+    toast.success("Successfully saved!", {
       duration: 4000,
-      position: 'top-right',
+      position: "top-right",
     });
   };
 
   const showError = () => {
-    toast.error('Something went wrong!', {
+    toast.error("Something went wrong!", {
       duration: 4000,
-      position: 'top-right',
+      position: "top-right",
     });
   };
 
   const showLoading = () => {
-    const loadingToast = toast.loading('Saving...');
-    
+    const loadingToast = toast.loading("Saving...");
+
     // Simulate API call
     setTimeout(() => {
-      toast.success('Saved successfully!', {
+      toast.success("Saved successfully!", {
         id: loadingToast, // Replace loading toast
       });
     }, 2000);
@@ -569,9 +946,11 @@ function ToastExamples() {
   // Custom toast with icons
   const showCustomToast = () => {
     toast.custom((t) => (
-      <div className={`${
-        t.visible ? 'animate-enter' : 'animate-leave'
-      } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}>
+      <div
+        className={`${
+          t.visible ? "animate-enter" : "animate-leave"
+        } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+      >
         <div className="flex-1 w-0 p-4">
           <div className="flex items-start">
             <div className="flex-shrink-0">
@@ -604,9 +983,9 @@ function ToastExamples() {
     const myPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
         if (Math.random() > 0.5) {
-          resolve('Success!');
+          resolve("Success!");
         } else {
-          reject('Failed!');
+          reject("Failed!");
         }
       }, 2000);
     });
@@ -614,21 +993,21 @@ function ToastExamples() {
     toast.promise(
       myPromise,
       {
-        loading: 'Processing...',
+        loading: "Processing...",
         success: (data) => `Successfully completed: ${data}`,
         error: (err) => `Error: ${err}`,
       },
       {
         style: {
-          minWidth: '250px',
+          minWidth: "250px",
         },
         success: {
           duration: 5000,
-          icon: '🎉',
+          icon: "🎉",
         },
         error: {
           duration: 5000,
-          icon: '❌',
+          icon: "❌",
         },
       }
     );
@@ -637,7 +1016,7 @@ function ToastExamples() {
   return (
     <div className="space-y-4 p-6">
       <h3 className="text-lg font-bold mb-4">Toast Notifications</h3>
-      
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <button
           onClick={showSuccess}
@@ -646,7 +1025,7 @@ function ToastExamples() {
           <FaCheck className="h-4 w-4" />
           <span>Success</span>
         </button>
-        
+
         <button
           onClick={showError}
           className="flex items-center justify-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
@@ -654,14 +1033,14 @@ function ToastExamples() {
           <FaTimes className="h-4 w-4" />
           <span>Error</span>
         </button>
-        
+
         <button
           onClick={showLoading}
           className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
           <span>Loading</span>
         </button>
-        
+
         <button
           onClick={showCustomToast}
           className="flex items-center justify-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
@@ -670,7 +1049,7 @@ function ToastExamples() {
           <span>Custom</span>
         </button>
       </div>
-      
+
       <button
         onClick={showPromiseToast}
         className="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
@@ -687,18 +1066,18 @@ function ToastExamples() {
         containerStyle={{}}
         toastOptions={{
           // Define default options
-          className: '',
+          className: "",
           duration: 4000,
           style: {
-            background: '#363636',
-            color: '#fff',
+            background: "#363636",
+            color: "#fff",
           },
           // Default options for specific types
           success: {
             duration: 3000,
             theme: {
-              primary: 'green',
-              secondary: 'black',
+              primary: "green",
+              secondary: "black",
             },
           },
         }}
@@ -709,25 +1088,29 @@ function ToastExamples() {
 ```
 
 **Sample Toast Output:**
+
 ```
                                     ┌─────────────────────────┐
                                     │ ✅ Successfully saved!   │
                                     └─────────────────────────┘
-                                    
+
                                     ┌─────────────────────────┐
                                     │ ❌ Something went wrong! │
                                     └─────────────────────────┘
-                                    
+
                                     ┌─────────────────────────┐
                                     │ ⏳ Processing...        │
                                     └─────────────────────────┘
 ```
-*Toast notifications appear in top-right corner with icons and animations*
+
+_Toast notifications appear in top-right corner with icons and animations_
 
 ---
+
 ```
 
 ```
+
 ## Routing with React Router
 
 ### What is React Router?
@@ -735,6 +1118,7 @@ function ToastExamples() {
 React Router is the standard routing library for React applications. It enables navigation between different components/pages without refreshing the entire page (Single Page Application - SPA behavior).
 
 **Key Benefits:**
+
 - **Client-side routing**: Fast navigation without page reloads
 - **URL synchronization**: Browser URL reflects current page
 - **History management**: Back/forward buttons work correctly
@@ -743,34 +1127,39 @@ React Router is the standard routing library for React applications. It enables 
 ### Core Router Components Explained
 
 **1. BrowserRouter**
+
 - **Purpose**: Provides routing context to your entire app
 - **Usage**: Wrap your entire app component
 - **What it does**: Uses HTML5 history API for clean URLs
 
 **2. Routes**
+
 - **Purpose**: Container for all your route definitions
 - **Usage**: Wrap all `<Route>` components
 - **What it does**: Matches current URL to appropriate route
 
 **3. Route**
+
 - **Purpose**: Defines a single route mapping
 - **Props**: `path` (URL pattern) and `element` (component to render)
 - **What it does**: Renders component when URL matches path
 
 **4. Link**
+
 - **Purpose**: Navigation without page refresh
 - **Usage**: Replace `<a>` tags for internal navigation
 - **What it does**: Updates URL and renders new component
 
 ### Basic Setup with Explanations
+
 ```jsx
 // App.jsx
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import NotFound from './pages/NotFound';
-import Navbar from './components/Navbar';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import NotFound from "./pages/NotFound";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
@@ -779,15 +1168,15 @@ function App() {
       <div className="min-h-screen bg-gray-50">
         {/* Navbar: Always visible on all pages */}
         <Navbar />
-        
+
         <main className="container mx-auto px-4 py-8">
           {/* Routes: Container for all route definitions */}
           <Routes>
             {/* Route: Maps URL path to component */}
-            <Route path="/" element={<Home />} />           {/* Homepage */}
-            <Route path="/about" element={<About />} />     {/* About page */}
+            <Route path="/" element={<Home />} /> {/* Homepage */}
+            <Route path="/about" element={<About />} /> {/* About page */}
             <Route path="/contact" element={<Contact />} /> {/* Contact page */}
-            <Route path="*" element={<NotFound />} />       {/* 404 - Catch all */}
+            <Route path="*" element={<NotFound />} /> {/* 404 - Catch all */}
           </Routes>
         </main>
       </div>
@@ -797,6 +1186,7 @@ function App() {
 ```
 
 **How it works:**
+
 1. **BrowserRouter** wraps the app and provides routing context
 2. **Navbar** stays visible on all pages (outside Routes)
 3. **Routes** looks at current URL and finds matching Route
@@ -804,13 +1194,14 @@ function App() {
 5. **Wildcard route** (`*`) catches unmatched URLs for 404 pages
 
 ### Navigation Component with Explanations
+
 ```jsx
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
 
 function Navbar() {
   // useLocation: Hook to get current URL information
   const location = useLocation();
-  
+
   // Helper function to check if current path matches link
   const isActive = (path) => location.pathname === path;
 
@@ -822,37 +1213,37 @@ function Navbar() {
           <Link to="/" className="text-xl font-bold text-blue-600">
             MyApp
           </Link>
-          
+
           <div className="flex space-x-4">
             {/* Conditional styling based on active route */}
-            <Link 
-              to="/"                    // Target URL
+            <Link
+              to="/" // Target URL
               className={`px-3 py-2 rounded-md ${
-                isActive('/') 
-                  ? 'bg-blue-600 text-white'      // Active styles
-                  : 'text-gray-700 hover:text-blue-600' // Inactive styles
+                isActive("/")
+                  ? "bg-blue-600 text-white" // Active styles
+                  : "text-gray-700 hover:text-blue-600" // Inactive styles
               }`}
             >
               Home
             </Link>
-            
-            <Link 
-              to="/about" 
+
+            <Link
+              to="/about"
               className={`px-3 py-2 rounded-md ${
-                isActive('/about') 
-                  ? 'bg-blue-600 text-white' 
-                  : 'text-gray-700 hover:text-blue-600'
+                isActive("/about")
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-700 hover:text-blue-600"
               }`}
             >
               About
             </Link>
-            
-            <Link 
-              to="/contact" 
+
+            <Link
+              to="/contact"
               className={`px-3 py-2 rounded-md ${
-                isActive('/contact') 
-                  ? 'bg-blue-600 text-white' 
-                  : 'text-gray-700 hover:text-blue-600'
+                isActive("/contact")
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-700 hover:text-blue-600"
               }`}
             >
               Contact
@@ -866,33 +1257,40 @@ function Navbar() {
 ```
 
 **Key Concepts:**
+
 - **useLocation()**: Returns current location object with pathname, search, etc.
 - **Link component**: Creates navigational links that update URL without refresh
 - **Active state**: Visual feedback showing current page
 - **Conditional styling**: Different styles for active vs inactive links
 
 **Sample Output:**
+
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
 │ MyApp                                    [Home] About  Contact          │
 └────────────────────────────────────────────────────────────────────────┘
 ```
-*Navigation bar with highlighted active page (Home is currently active)*
+
+_Navigation bar with highlighted active page (Home is currently active)_
 
 ### Dynamic Routes and Parameters with Explanations
+
 ```jsx
 // App.jsx - Dynamic route definitions
 <Routes>
-  <Route path="/" element={<Home />} />                    {/* Static route */}
-  <Route path="/users" element={<UserList />} />           {/* Static route */}
-  <Route path="/users/:id" element={<UserDetail />} />     {/* Dynamic route with parameter */}
+  <Route path="/" element={<Home />} /> {/* Static route */}
+  <Route path="/users" element={<UserList />} /> {/* Static route */}
+  <Route path="/users/:id" element={<UserDetail />} />{" "}
+  {/* Dynamic route with parameter */}
   <Route path="/products/:category" element={<ProductCategory />} /> {/* Dynamic route */}
-  <Route path="/blog/:year/:month" element={<BlogArchive />} />      {/* Multiple parameters */}
-  <Route path="*" element={<NotFound />} />                {/* Catch-all route */}
+  <Route path="/blog/:year/:month" element={<BlogArchive />} />{" "}
+  {/* Multiple parameters */}
+  <Route path="*" element={<NotFound />} /> {/* Catch-all route */}
 </Routes>
 ```
 
 **Route Parameter Patterns:**
+
 - `:id` - Single parameter (e.g., `/users/123`)
 - `:category` - Named parameter (e.g., `/products/electronics`)
 - `:year/:month` - Multiple parameters (e.g., `/blog/2024/03`)
@@ -900,16 +1298,16 @@ function Navbar() {
 
 ```jsx
 // UserDetail.jsx - Using route parameters
-import { useParams, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 function UserDetail() {
   // useParams: Extract parameters from URL
-  const { id } = useParams();  // Gets 'id' from /users/:id
-  
+  const { id } = useParams(); // Gets 'id' from /users/:id
+
   // useNavigate: Programmatic navigation
   const navigate = useNavigate();
-  
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -918,10 +1316,12 @@ function UserDetail() {
       try {
         setLoading(true);
         // Use the 'id' parameter in API call
-        const response = await axios.get(`https://jsonplaceholder.typicode.com/users/${id}`);
+        const response = await axios.get(
+          `https://jsonplaceholder.typicode.com/users/${id}`
+        );
         setUser(response.data);
       } catch (error) {
-        console.error('Error fetching user:', error);
+        console.error("Error fetching user:", error);
       } finally {
         setLoading(false);
       }
@@ -939,15 +1339,19 @@ function UserDetail() {
       </div>
     );
   }
-  
+
   // Error state
   if (!user) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">User Not Found</h2>
-        <p className="text-gray-600 mb-6">The user with ID {id} could not be found.</p>
-        <button 
-          onClick={() => navigate('/users')}
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          User Not Found
+        </h2>
+        <p className="text-gray-600 mb-6">
+          The user with ID {id} could not be found.
+        </p>
+        <button
+          onClick={() => navigate("/users")}
           className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
           Back to Users
@@ -959,14 +1363,14 @@ function UserDetail() {
   return (
     <div className="max-w-2xl mx-auto">
       {/* Navigation button using useNavigate */}
-      <button 
-        onClick={() => navigate('/users')}  // Programmatic navigation
+      <button
+        onClick={() => navigate("/users")} // Programmatic navigation
         className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors"
       >
         <span className="mr-2">←</span>
         Back to Users
       </button>
-      
+
       {/* User details card */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex items-center mb-6">
@@ -978,25 +1382,33 @@ function UserDetail() {
             <p className="text-gray-600">@{user.username}</p>
           </div>
         </div>
-        
+
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium text-gray-500">Email</label>
+              <label className="block text-sm font-medium text-gray-500">
+                Email
+              </label>
               <p className="text-gray-800">{user.email}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-500">Phone</label>
+              <label className="block text-sm font-medium text-gray-500">
+                Phone
+              </label>
               <p className="text-gray-800">{user.phone}</p>
             </div>
           </div>
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium text-gray-500">Website</label>
+              <label className="block text-sm font-medium text-gray-500">
+                Website
+              </label>
               <p className="text-blue-600">{user.website}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-500">Company</label>
+              <label className="block text-sm font-medium text-gray-500">
+                Company
+              </label>
               <p className="text-gray-800">{user.company.name}</p>
             </div>
           </div>
@@ -1017,21 +1429,22 @@ function UserDetail() {
 // URL: /users/123
 // Route: <Route path="/users/:id" element={<UserDetail />} />
 
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
 function UserDetail() {
   const params = useParams();
   console.log(params); // { id: "123" }
-  
+
   // Or destructure directly
   const { id } = useParams();
   console.log(id); // "123"
-  
+
   return <div>User ID: {id}</div>;
 }
 ```
 
 **Real Examples:**
+
 - URL: `/users/456` → `useParams()` returns `{ id: "456" }`
 - URL: `/products/electronics` → `useParams()` returns `{ category: "electronics" }`
 - URL: `/blog/2024/march` → `useParams()` returns `{ year: "2024", month: "march" }`
@@ -1041,27 +1454,27 @@ function UserDetail() {
 **What it does**: Programmatically navigate to other pages (like clicking a link)
 
 ```jsx
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 function MyComponent() {
   const navigate = useNavigate();
-  
+
   const goToHome = () => {
-    navigate('/');           // Go to homepage
+    navigate("/"); // Go to homepage
   };
-  
+
   const goToUsers = () => {
-    navigate('/users');      // Go to users page
+    navigate("/users"); // Go to users page
   };
-  
+
   const goBack = () => {
-    navigate(-1);           // Go back one page (like browser back button)
+    navigate(-1); // Go back one page (like browser back button)
   };
-  
+
   const goForward = () => {
-    navigate(1);            // Go forward one page
+    navigate(1); // Go forward one page
   };
-  
+
   return (
     <div>
       <button onClick={goToHome}>Go Home</button>
@@ -1073,6 +1486,7 @@ function MyComponent() {
 ```
 
 **When to use:**
+
 - After form submission: `navigate('/success')`
 - After login: `navigate('/dashboard')`
 - Cancel button: `navigate(-1)` (go back)
@@ -1083,30 +1497,31 @@ function MyComponent() {
 **What it does**: Tells you information about the current page/URL
 
 ```jsx
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 function MyComponent() {
   const location = useLocation();
-  
-  console.log(location.pathname);  // Current path: "/users/123"
-  console.log(location.search);    // Query string: "?tab=profile"
-  console.log(location.hash);      // Hash: "#section1"
-  
+
+  console.log(location.pathname); // Current path: "/users/123"
+  console.log(location.search); // Query string: "?tab=profile"
+  console.log(location.hash); // Hash: "#section1"
+
   return (
     <div>
       <p>Current page: {location.pathname}</p>
-      {location.pathname === '/users' && <p>You're on the users page!</p>}
+      {location.pathname === "/users" && <p>You're on the users page!</p>}
     </div>
   );
 }
 ```
 
 **Practical Examples:**
+
 ```jsx
 // Check if user is on specific page
 const location = useLocation();
-const isHomePage = location.pathname === '/';
-const isUsersPage = location.pathname === '/users';
+const isHomePage = location.pathname === "/";
+const isUsersPage = location.pathname === "/users";
 
 // Highlight active navigation link
 const isActive = (path) => location.pathname === path;
@@ -1114,48 +1529,48 @@ const isActive = (path) => location.pathname === path;
 // Get query parameters
 // URL: /search?q=react&category=tutorials
 const searchParams = new URLSearchParams(location.search);
-const query = searchParams.get('q');        // "react"
-const category = searchParams.get('category'); // "tutorials"
+const query = searchParams.get("q"); // "react"
+const category = searchParams.get("category"); // "tutorials"
 ```
 
 ### Hook Comparison - When to Use What
 
-| Hook | Purpose | Example Use Case |
-|------|---------|------------------|
-| `useParams()` | Get URL parameters | Get user ID from `/users/:id` |
-| `useNavigate()` | Go to other pages | Redirect after form submission |
-| `useLocation()` | Know current page info | Highlight active menu item |
+| Hook            | Purpose                | Example Use Case               |
+| --------------- | ---------------------- | ------------------------------ |
+| `useParams()`   | Get URL parameters     | Get user ID from `/users/:id`  |
+| `useNavigate()` | Go to other pages      | Redirect after form submission |
+| `useLocation()` | Know current page info | Highlight active menu item     |
 
 ### Complete Example - All Hooks Together
 
 ```jsx
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 function UserProfile() {
   // Get user ID from URL (/users/123)
   const { id } = useParams();
-  
+
   // Function to navigate to other pages
   const navigate = useNavigate();
-  
+
   // Get current page information
   const location = useLocation();
-  
+
   const handleEdit = () => {
     // Go to edit page with user ID
     navigate(`/users/${id}/edit`);
   };
-  
+
   const handleDelete = () => {
     // After deleting, go back to users list
-    navigate('/users');
+    navigate("/users");
   };
-  
+
   return (
     <div>
       <h1>User Profile #{id}</h1>
       <p>Current URL: {location.pathname}</p>
-      
+
       <button onClick={handleEdit}>Edit User</button>
       <button onClick={handleDelete}>Delete User</button>
       <button onClick={() => navigate(-1)}>Go Back</button>
@@ -1165,12 +1580,14 @@ function UserProfile() {
 ```
 
 **What happens:**
+
 1. **useParams()** gets `id` from URL `/users/123` → `id = "123"`
 2. **useNavigate()** creates functions to go to different pages
 3. **useLocation()** shows current URL path
 4. Buttons use navigate to go to edit page, users list, or previous page
 
 **Sample Output:**
+
 ```
 ┌────────────────────────────────────────────────────────────────────────────────┐
 │ ← Back to Users                                                        │
@@ -1182,13 +1599,331 @@ function UserProfile() {
 │  Phone: 555-123-4567            Company: Acme Corp                     │
 └────────────────────────────────────────────────────────────────────────────────┘
 ```
-*User detail page with avatar, information grid, and navigation button*
+
+_User detail page with avatar, information grid, and navigation button_
+
+---
+
+## State vs Props - Understanding Data Flow
+
+### What are Props?
+
+Props (properties) are how you pass data **from parent to child** components. Think of props like function parameters - they're inputs that make components reusable.
+
+**Key Rules:**
+
+- Props flow **downward** (parent → child)
+- Props are **read-only** (cannot be changed by child)
+- Props make components **reusable** with different data
+
+```jsx
+// Parent Component
+function App() {
+  const user = {
+    name: "Alice Johnson",
+    email: "alice@example.com",
+    role: "Developer",
+    isOnline: true,
+  };
+
+  return (
+    <div className="p-6">
+      <UserCard
+        name={user.name}
+        email={user.email}
+        role={user.role}
+        isOnline={user.isOnline}
+      />
+
+      {/* Same component, different data */}
+      <UserCard
+        name="Bob Smith"
+        email="bob@example.com"
+        role="Designer"
+        isOnline={false}
+      />
+    </div>
+  );
+}
+
+// Child Component - Receives props
+function UserCard({ name, email, role, isOnline }) {
+  return (
+    <div className="bg-white p-4 rounded-lg shadow-md border">
+      <div className="flex items-center mb-3">
+        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+          {name.charAt(0)}
+        </div>
+        <div className="ml-3">
+          <h3 className="font-bold text-gray-800">{name}</h3>
+          <p className="text-sm text-gray-600">{role}</p>
+        </div>
+        <div
+          className={`ml-auto w-3 h-3 rounded-full ${
+            isOnline ? "bg-green-500" : "bg-gray-400"
+          }`}
+        ></div>
+      </div>
+      <p className="text-gray-700">{email}</p>
+    </div>
+  );
+}
+```
+
+**Sample Output:**
+
+```
+┌─────────────────────────────────────┐
+│ (A) Alice Johnson          ●        │
+│     Developer                       │
+│                                     │
+│ alice@example.com                   │
+└─────────────────────────────────────┘
+
+┌─────────────────────────────────────┐
+│ (B) Bob Smith              ○        │
+│     Designer                        │
+│                                     │
+│ bob@example.com                     │
+└─────────────────────────────────────┘
+```
+
+_Two user cards with different data, green dot = online, gray dot = offline_
+
+### What is State?
+
+State is **internal data** that a component manages and can change over time. When state changes, the component re-renders to show the new data.
+
+**Key Rules:**
+
+- State is **private** to the component
+- State can **change** over time
+- Changing state **triggers re-render**
+- Use `useState` hook to manage state
+
+```jsx
+import { useState } from "react";
+
+function ShoppingCart() {
+  // State: data that can change
+  const [items, setItems] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const addItem = (product) => {
+    const newItems = [...items, { ...product, id: Date.now() }];
+    setItems(newItems);
+    setTotal(total + product.price);
+  };
+
+  const removeItem = (id) => {
+    const newItems = items.filter((item) => item.id !== id);
+    const removedItem = items.find((item) => item.id === id);
+    setItems(newItems);
+    setTotal(total - removedItem.price);
+  };
+
+  return (
+    <div className="relative">
+      {/* Cart Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+      >
+        <span>🛒</span>
+        <span>Cart ({items.length})</span>
+        <span>${total.toFixed(2)}</span>
+      </button>
+
+      {/* Cart Dropdown */}
+      {isOpen && (
+        <div className="absolute top-12 right-0 bg-white border rounded-lg shadow-lg p-4 w-80">
+          <h3 className="font-bold mb-3">Shopping Cart</h3>
+
+          {items.length === 0 ? (
+            <p className="text-gray-500">Your cart is empty</p>
+          ) : (
+            <div className="space-y-2">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center p-2 border-b"
+                >
+                  <div>
+                    <p className="font-medium">{item.name}</p>
+                    <p className="text-sm text-gray-600">${item.price}</p>
+                  </div>
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <div className="pt-2 border-t font-bold">
+                Total: ${total.toFixed(2)}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Product Buttons */}
+      <div className="mt-4 space-x-2">
+        <button
+          onClick={() => addItem({ name: "T-Shirt", price: 19.99 })}
+          className="bg-green-600 text-white px-3 py-1 rounded"
+        >
+          Add T-Shirt ($19.99)
+        </button>
+        <button
+          onClick={() => addItem({ name: "Jeans", price: 49.99 })}
+          className="bg-green-600 text-white px-3 py-1 rounded"
+        >
+          Add Jeans ($49.99)
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+**Sample Output (Cart Open):**
+
+```
+┌─────────────────────────────────────┐
+│ 🛒 Cart (2) $69.98                  │
+└─────────────────────────────────────┘
+  ┌───────────────────────────────────┐
+  │ Shopping Cart                     │
+  │                                   │
+  │ T-Shirt              [Remove]     │
+  │ $19.99                            │
+  │ ─────────────────────────────────  │
+  │ Jeans                [Remove]     │
+  │ $49.99                            │
+  │ ─────────────────────────────────  │
+  │ Total: $69.98                     │
+  └───────────────────────────────────┘
+
+[Add T-Shirt ($19.99)] [Add Jeans ($49.99)]
+```
+
+_Interactive shopping cart with state management_
+
+### State vs Props - Key Differences
+
+| Aspect                 | State                    | Props                       |
+| ---------------------- | ------------------------ | --------------------------- |
+| **Ownership**          | Owned by component       | Passed from parent          |
+| **Mutability**         | Can be changed           | Read-only                   |
+| **Purpose**            | Internal data management | Data passing                |
+| **Triggers Re-render** | Yes, when changed        | Yes, when parent updates    |
+| **Example**            | `useState(0)`            | `<Component name="John" />` |
+
+### Combining State and Props
+
+Real applications use both state and props together:
+
+```jsx
+// Parent with state
+function TodoApp() {
+  const [todos, setTodos] = useState([
+    { id: 1, text: "Learn React", completed: false },
+    { id: 2, text: "Build an app", completed: true },
+  ]);
+
+  const toggleTodo = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+
+  return (
+    <div className="max-w-md mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-4">My Todos</h1>
+      {todos.map((todo) => (
+        <TodoItem
+          key={todo.id}
+          todo={todo} // Props: passing data down
+          onToggle={toggleTodo} // Props: passing function down
+        />
+      ))}
+    </div>
+  );
+}
+
+// Child component receives props
+function TodoItem({ todo, onToggle }) {
+  return (
+    <div
+      className={`flex items-center p-3 rounded-lg mb-2 ${
+        todo.completed ? "bg-green-100" : "bg-gray-100"
+      }`}
+    >
+      <input
+        type="checkbox"
+        checked={todo.completed}
+        onChange={() => onToggle(todo.id)} // Calls parent function
+        className="mr-3"
+      />
+      <span
+        className={`flex-1 ${
+          todo.completed ? "line-through text-gray-500" : "text-gray-800"
+        }`}
+      >
+        {todo.text}
+      </span>
+    </div>
+  );
+}
+```
+
+**Sample Output:**
+
+```
+┌─────────────────────────────────────┐
+│ My Todos                            │
+│                                     │
+│ ☐ Learn React                       │
+│ ☑ Build an app                      │
+└─────────────────────────────────────┘
+```
+
+_Todo list showing state management and props passing_
+
+### Best Practices
+
+**1. Keep State Local**
+
+- Only lift state up when multiple components need it
+- Start with local state, move up as needed
+
+**2. Props Naming**
+
+- Use descriptive names: `userName` not `name`
+- Use `onAction` for function props: `onSubmit`, `onClick`
+
+**3. State Updates**
+
+- Always use setter function: `setCount(count + 1)`
+- For objects/arrays, create new copies: `setUser({...user, name: 'New Name'})`
+
+**4. Component Responsibility**
+
+- Parent manages state, children display data
+- Children communicate up through function props
+- Keep components focused on single responsibility
 
 ---
 
 ## Scalable Code Structure
 
 ### Small to Medium Projects - Component-Based Structure
+
 ```
 src/
 ├── components/           # Reusable UI components
@@ -1237,6 +1972,7 @@ src/
 ```
 
 ### Large Applications - Feature-Based Structure
+
 ```
 src/
 ├── shared/              # Code shared across all features
@@ -1305,12 +2041,14 @@ src/
 ### When to Use Each Structure
 
 **Component-Based Structure (Small-Medium Projects):**
+
 - **Team size**: 1-5 developers
 - **Features**: 5-15 main features
 - **Components**: < 50 components
 - **Benefits**: Simple, easy to navigate, quick setup
 
 **Feature-Based Structure (Large Projects):**
+
 - **Team size**: 5+ developers
 - **Features**: 15+ main features
 - **Components**: 50+ components
@@ -1319,26 +2057,29 @@ src/
 ### Key Principles for Both Structures
 
 **1. Separation of Concerns**
+
 - Keep components focused on UI rendering
 - Move business logic to custom hooks
 - Isolate API calls in service files
 - Store reusable utilities separately
 
 **2. Consistent Naming Conventions**
+
 - Use PascalCase for components (UserCard.jsx)
 - Use camelCase for hooks (useUserData.js)
 - Use kebab-case for utility files (api-helpers.js)
 - Be descriptive with folder and file names
 
 **3. Import/Export Patterns**
+
 - Use index.js files for clean imports
 - Export components as named exports when possible
 - Group related exports together
 - Avoid deep import paths
 
 **4. Scalability Considerations**
+
 - Start with component-based, migrate to feature-based as needed
 - Keep shared code in dedicated folders
 - Use consistent folder structures within features
 - Plan for code splitting and lazy loading
-
