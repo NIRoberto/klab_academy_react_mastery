@@ -805,6 +805,27 @@ npm install lucide-react
 npm install @heroicons/react
 ```
 
+**12. Tailwind CSS - Utility-First Styling**
+
+```bash
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+```jsx
+function Card() {
+  return (
+    <div className="max-w-sm mx-auto bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-xl font-bold text-gray-800 mb-2">Product Card</h2>
+      <p className="text-gray-600 mb-4">Simple card with Tailwind CSS</p>
+      <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors">
+        Buy Now
+      </button>
+    </div>
+  );
+}
+```
+
 ### Package Usage Examples
 
 **Using Icons:**
