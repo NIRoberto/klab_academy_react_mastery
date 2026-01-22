@@ -3,7 +3,7 @@ import { products } from "../data/products";
 import ProductCard from "../components/ProductCard";
 import Cart from "../components/Cart";
 import ConfirmOrder from "../components/ConfirmOrder";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../hooks/useCart";
 
 const Home = () => {
   const [isOrderModalVisible, setIsOrderModalVisible] = useState(false);

@@ -1,6 +1,6 @@
 
 
-import { useCart } from '../context/CartContext';
+import { useCart } from '../hooks/useCart';
 import { CheckCircle } from 'lucide-react';
 
 interface ConfirmOrderProps {

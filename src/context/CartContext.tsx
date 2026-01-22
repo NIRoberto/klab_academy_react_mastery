@@ -1,30 +1,6 @@
-import { createContext, useContext, useReducer, ReactNode } from 'react';
+import { useReducer, type ReactNode } from 'react';
+import { CartContext, type CartItem, type CartState, type CartAction } from './cart';
 import type { Product } from '../data/products';
-
-export interface CartItem extends Product {
-  quantity: number;
-}
-
-interface CartState {
-  items: CartItem[];
-  total: number;
-  itemCount: number;
-}
-
-type CartAction =
-  | { type: 'ADD_ITEM'; payload: Product }
-  | { type: 'REMOVE_ITEM'; payload: number }
-  | { type: 'UPDATE_QUANTITY'; payload: { id: number; quantity: number } }
-  | { type: 'CLEAR_CART' };
-
-interface CartContextType extends CartState {
-  addItem: (product: Product) => void;
-  removeItem: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
-  clearCart: () => void;
-}
-
-const CartContext = createContext<CartContextType | undefined>(undefined);
 
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
@@ -70,14 +46,14 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     }
     
     case 'CLEAR_CART':
-      return { items: [], total: 0, itemCount: 0 };
+      return { items: [], total: 0, itemCount: 0 } as CartState;
     
     default:
       return state;
   }
 }
 
-function CartProvider({ children }: { children: ReactNode }) {
+export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, {
     items: [],
     total: 0,
@@ -113,12 +89,3 @@ function CartProvider({ children }: { children: ReactNode }) {
   );
 }
 
-function useCart() {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within CartProvider');
-  }
-  return context;
-}
-
-export { CartProvider, useCart };
