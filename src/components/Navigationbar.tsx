@@ -1,42 +1,42 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-interface NavLinks {
+interface NavLink {
   title: string;
   path: string;
 }
 
 const NavigationBar = () => {
-  const navLinks: NavLinks[] = [
-    {
-      title: "Home",
-      path: "/",
-    },
-    {
-      title: "About",
-      path: "/about",
-    },
-    {
-      title: "Products",
-      path: "/products",
-    },
-    {
-      title: "Contact",
-      path: "/contact",
-    },
+  const location = useLocation();
+  
+  const navLinks: NavLink[] = [
+    { title: "Home", path: "/" },
+    { title: "About", path: "/about" },
+    { title: "Contact", path: "/contact" },
   ];
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
-    <div>
-      <nav>
-        <ul>
+    <nav className="navigation">
+      <div className="nav-container">
+        <Link to="/" className="nav-logo">
+          <h1>Dessert Shop</h1>
+        </Link>
+        
+        <ul className="nav-links">
           {navLinks.map((link) => (
             <li key={link.title}>
-              <Link to={link.path}>{link.title}</Link>
+              <Link 
+                to={link.path} 
+                className={`nav-link ${isActive(link.path) ? 'active' : ''}`}
+              >
+                {link.title}
+              </Link>
             </li>
           ))}
         </ul>
-      </nav>
-    </div>
+      </div>
+    </nav>
   );
 };
 
