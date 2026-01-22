@@ -77,7 +77,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
   }
 }
 
-export function CartProvider({ children }: { children: ReactNode }) {
+function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, {
     items: [],
     total: 0,
@@ -113,10 +113,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useCart() {
+function useCart() {
   const context = useContext(CartContext);
   if (!context) {
     throw new Error('useCart must be used within CartProvider');
   }
   return context;
 }
+
+export { CartProvider, useCart };
