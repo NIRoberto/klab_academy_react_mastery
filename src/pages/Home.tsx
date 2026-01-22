@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { products, type Product } from "../data/products";
 import ProductCard from "../components/ProductCard";
 import ConfirmOrder from "../components/ConfirmOrder";
