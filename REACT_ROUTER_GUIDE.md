@@ -379,7 +379,87 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+```typescript
+// pages/Profile.tsx
+const Profile: React.FC = () => {
+  return (
+    <div>
+      <h2>User Profile</h2>
+      <p>Manage your personal information and preferences.</p>
+      <form>
+        <div>
+          <label>Name:</label>
+          <input type="text" defaultValue="John Doe" />
+        </div>
+        <div>
+          <label>Email:</label>
+          <input type="email" defaultValue="john@example.com" />
+        </div>
+        <button type="submit">Update Profile</button>
+      </form>
+    </div>
+  );
+};
+
+export default Profile;
+
+// pages/Settings.tsx
+const Settings: React.FC = () => {
+  return (
+    <div>
+      <h2>Settings</h2>
+      <p>Configure your application preferences.</p>
+      <div>
+        <label>
+          <input type="checkbox" defaultChecked />
+          Enable notifications
+        </label>
+      </div>
+      <div>
+        <label>
+          <input type="checkbox" />
+          Dark mode
+        </label>
+      </div>
+      <div>
+        <label>Language:</label>
+        <select>
+          <option>English</option>
+          <option>Spanish</option>
+          <option>French</option>
+        </select>
+      </div>
+    </div>
+  );
+};
+
+export default Settings;
+
+// pages/Analytics.tsx
+const Analytics: React.FC = () => {
+  return (
+    <div>
+      <h2>Analytics Dashboard</h2>
+      <p>View your application usage statistics.</p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+        <div style={{ padding: '20px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
+          <h3>Total Users</h3>
+          <p style={{ fontSize: '24px', fontWeight: 'bold' }}>1,234</p>
+        </div>
+        <div style={{ padding: '20px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
+          <h3>Page Views</h3>
+          <p style={{ fontSize: '24px', fontWeight: 'bold' }}>5,678</p>
+        </div>
+        <div style={{ padding: '20px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
+          <h3>Conversion Rate</h3>
+          <p style={{ fontSize: '24px', fontWeight: 'bold' }}>3.2%</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Analytics;
 ```
 
 ### 5. 404 Not Found Page
