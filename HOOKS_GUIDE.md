@@ -188,10 +188,10 @@ const TodoList: React.FC = () => {
 ## 2. useEffect Hook
 
 ### Description
-The `useEffect` Hook lets you perform side effects in functional components. It serves the same purpose as `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount` combined.
+The `useEffect` Hook lets you perform side effects in functional components. Side effects are operations that interact with the outside world or affect something beyond the component's render output.
 
 ### Definition
-`useEffect` runs after every render and can be used for data fetching, subscriptions, or manually changing the DOM.
+`useEffect` runs after the component renders and can be used for data fetching, setting up subscriptions, manually changing the DOM, timers, or any operation that needs to happen after rendering.
 
 ### Syntax
 ```typescript
