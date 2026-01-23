@@ -1,14 +1,17 @@
-# React Hooks Guide
+# React Hooks Guide with TypeScript
 
 ## What are React Hooks?
 
 React Hooks are functions that let you use state and other React features in functional components. They were introduced in React 16.8 and allow you to "hook into" React features without writing class components.
+
+**Important: All examples in this guide use TypeScript for type safety and better development experience.**
 
 ## Rules of Hooks
 
 1. Only call Hooks at the top level of your React function
 2. Only call Hooks from React function components or custom Hooks
 3. Hook names must start with "use"
+4. **Always use TypeScript for proper typing and error prevention**
 
 ---
 
@@ -22,19 +25,48 @@ The `useState` Hook allows you to add state to functional components. It returns
 
 ### Syntax
 ```typescript
-const [state, setState] = useState(initialValue);
+const [state, setState] = useState<StateType>(initialValue);
+```
+
+### TypeScript Types for useState
+```typescript
+// Basic types
+const [name, setName] = useState<string>(''); // Explicit typing
+const [count, setCount] = useState<number>(0);
+const [isVisible, setIsVisible] = useState<boolean>(false);
+
+// Array types
+const [items, setItems] = useState<string[]>([]);
+const [numbers, setNumbers] = useState<number[]>([1, 2, 3]);
+
+// Object types with interfaces
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+const [user, setUser] = useState<User | null>(null);
+
+// Union types
+type Status = 'idle' | 'loading' | 'success' | 'error';
+const [status, setStatus] = useState<Status>('idle');
 ```
 
 ### Four Small Examples
 
 #### Example 1: Simple Counter
 ```typescript
-const Counter = () => {
-  const [count, setCount] = useState(0);
+const Counter: React.FC = () => {
+  const [count, setCount] = useState<number>(0);
+  
+  const handleIncrement = (): void => {
+    setCount(count + 1);
+  };
+  
   return (
     <div>
       <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>+</button>
+      <button onClick={handleIncrement}>+</button>
     </div>
   );
 };
@@ -42,51 +74,109 @@ const Counter = () => {
 
 #### Example 2: Toggle Boolean
 ```typescript
-const Toggle = () => {
-  const [isVisible, setIsVisible] = useState(false);
+const Toggle: React.FC = () => {
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  
+  const handleToggle = (): void => {
+    setIsVisible(!isVisible);
+  };
+  
   return (
     <div>
-      <button onClick={() => setIsVisible(!isVisible)}>Toggle</button>
+      <button onClick={handleToggle}>Toggle</button>
       {isVisible && <p>Now you see me!</p>}
     </div>
   );
 };
 ```
 
-#### Example 3: Form Input
+#### Example 3: Form Input with Interface
 ```typescript
-const NameForm = () => {
-  const [name, setName] = useState('');
+interface FormData {
+  name: string;
+  email: string;
+}
+
+const NameForm: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: ''
+  });
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+  
   return (
     <div>
       <input 
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        name="name"
+        value={formData.name}
+        onChange={handleInputChange}
         placeholder="Enter your name"
       />
-      <p>Hello, {name}!</p>
+      <input 
+        name="email"
+        type="email"
+        value={formData.email}
+        onChange={handleInputChange}
+        placeholder="Enter your email"
+      />
+      <p>Hello, {formData.name}! Email: {formData.email}</p>
     </div>
   );
 };
 ```
 
-#### Example 4: Array State
+#### Example 4: Array State with Interface
 ```typescript
-const TodoList = () => {
-  const [todos, setTodos] = useState<string[]>([]);
-  const [input, setInput] = useState('');
+interface Todo {
+  id: number;
+  text: string;
+  completed: boolean;
+}
+
+const TodoList: React.FC = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [input, setInput] = useState<string>('');
   
-  const addTodo = () => {
-    setTodos([...todos, input]);
-    setInput('');
+  const addTodo = (): void => {
+    if (input.trim()) {
+      const newTodo: Todo = {
+        id: Date.now(),
+        text: input,
+        completed: false
+      };
+      setTodos([...todos, newTodo]);
+      setInput('');
+    }
+  };
+  
+  const toggleTodo = (id: number): void => {
+    setTodos(todos.map(todo => 
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    ));
   };
   
   return (
     <div>
-      <input value={input} onChange={(e) => setInput(e.target.value)} />
+      <input 
+        value={input} 
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInput(e.target.value)} 
+        placeholder="Add a todo"
+      />
       <button onClick={addTodo}>Add</button>
       <ul>
-        {todos.map((todo, i) => <li key={i}>{todo}</li>)}
+        {todos.map(todo => (
+          <li 
+            key={todo.id} 
+            onClick={() => toggleTodo(todo.id)}
+            style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
+          >
+            {todo.text}
+          </li>
+        ))}
       </ul>
     </div>
   );
@@ -113,27 +203,94 @@ useEffect(() => {
 }, [dependencies]); // Dependencies array (optional)
 ```
 
+### TypeScript Types for useEffect
+```typescript
+// Basic effect with no return type needed
+useEffect((): void => {
+  console.log('Component mounted');
+}, []);
+
+// Effect with cleanup - return type is inferred
+useEffect((): (() => void) | void => {
+  const timer = setInterval(() => {
+    console.log('Timer tick');
+  }, 1000);
+  
+  return (): void => clearInterval(timer);
+}, []);
+
+// Async effect with proper typing
+useEffect((): void => {
+  const fetchData = async (): Promise<void> => {
+    try {
+      const response = await fetch('/api/data');
+      const data: ApiResponse = await response.json();
+      setData(data);
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  };
+  
+  fetchData();
+}, []);
+```
+
 ### Four Small Examples
 
-#### Example 1: Data Fetching
+#### Example 1: Data Fetching with TypeScript
 ```typescript
-const UserList = () => {
-  const [users, setUsers] = useState([]);
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const UserList: React.FC = () => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   
-  useEffect(() => {
-    fetch('/api/users')
-      .then(res => res.json())
-      .then(setUsers);
+  useEffect((): void => {
+    const fetchUsers = async (): Promise<void> => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/users');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const userData: User[] = await response.json();
+        setUsers(userData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchUsers();
   }, []);
   
-  return <ul>{users.map(user => <li key={user.id}>{user.name}</li>)}</ul>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  
+  return (
+    <ul>
+      {users.map(user => (
+        <li key={user.id}>{user.name} - {user.email}</li>
+      ))}
+    </ul>
+  );
 };
 ```
 
-#### Example 2: Document Title
+#### Example 2: Document Title with Props
 ```typescript
-const PageTitle = ({ title }: { title: string }) => {
-  useEffect(() => {
+interface PageTitleProps {
+  title: string;
+}
+
+const PageTitle: React.FC<PageTitleProps> = ({ title }) => {
+  useEffect((): void => {
     document.title = title;
   }, [title]);
   
@@ -141,40 +298,48 @@ const PageTitle = ({ title }: { title: string }) => {
 };
 ```
 
-#### Example 3: Timer/Interval
+#### Example 3: Timer with Cleanup
 ```typescript
-const Timer = () => {
-  const [seconds, setSeconds] = useState(0);
+const Timer: React.FC = () => {
+  const [seconds, setSeconds] = useState<number>(0);
   
-  useEffect(() => {
-    const interval = setInterval(() => {
+  useEffect((): (() => void) => {
+    const interval: NodeJS.Timeout = setInterval((): void => {
       setSeconds(s => s + 1);
     }, 1000);
     
-    return () => clearInterval(interval);
+    return (): void => clearInterval(interval);
   }, []);
   
   return <p>Timer: {seconds}s</p>;
 };
 ```
 
-#### Example 4: Event Listener
+#### Example 4: Event Listener with TypeScript
 ```typescript
-const WindowSize = () => {
-  const [size, setSize] = useState({ width: 0, height: 0 });
+interface WindowSize {
+  width: number;
+  height: number;
+}
+
+const WindowSizeTracker: React.FC = () => {
+  const [size, setSize] = useState<WindowSize>({ width: 0, height: 0 });
   
-  useEffect(() => {
-    const updateSize = () => {
-      setSize({ width: window.innerWidth, height: window.innerHeight });
+  useEffect((): (() => void) => {
+    const updateSize = (): void => {
+      setSize({ 
+        width: window.innerWidth, 
+        height: window.innerHeight 
+      });
     };
     
     window.addEventListener('resize', updateSize);
-    updateSize();
+    updateSize(); // Set initial size
     
-    return () => window.removeEventListener('resize', updateSize);
+    return (): void => window.removeEventListener('resize', updateSize);
   }, []);
   
-  return <p>Size: {size.width} x {size.height}</p>;
+  return <p>Window Size: {size.width} x {size.height}</p>;
 };
 ```
 
@@ -190,53 +355,169 @@ The `useContext` Hook allows you to consume context values without wrapping comp
 
 ### Syntax
 ```typescript
-const value = useContext(MyContext);
+const value = useContext<ContextType>(MyContext);
+```
+
+### TypeScript Context Creation
+```typescript
+// Define context type
+interface MyContextType {
+  value: string;
+  setValue: (value: string) => void;
+}
+
+// Create context with type
+const MyContext = createContext<MyContextType | undefined>(undefined);
+
+// Custom hook with type safety
+const useMyContext = (): MyContextType => {
+  const context = useContext(MyContext);
+  if (!context) {
+    throw new Error('useMyContext must be used within MyProvider');
+  }
+  return context;
+};
 ```
 
 ### Four Small Examples
 
-#### Example 1: Theme Context
+#### Example 1: Theme Context with TypeScript
 ```typescript
-const ThemeContext = createContext('light');
+interface ThemeContextType {
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+}
 
-const ThemedButton = () => {
-  const theme = useContext(ThemeContext);
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  
+  const toggleTheme = (): void => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+  
+  const value: ThemeContextType = { theme, toggleTheme };
+  
   return (
-    <button style={{ background: theme === 'dark' ? '#333' : '#fff' }}>
-      Themed Button
+    <ThemeContext.Provider value={value}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+const ThemedButton: React.FC = () => {
+  const { theme, toggleTheme } = useContext(ThemeContext)!;
+  
+  return (
+    <button 
+      onClick={toggleTheme}
+      style={{ background: theme === 'dark' ? '#333' : '#fff' }}
+    >
+      Current theme: {theme}
     </button>
   );
 };
 ```
 
-#### Example 2: User Context
+#### Example 2: User Context with Interface
 ```typescript
-const UserContext = createContext(null);
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
 
-const UserProfile = () => {
-  const user = useContext(UserContext);
-  return user ? <p>Welcome, {user.name}!</p> : <p>Please log in</p>;
+interface UserContextType {
+  user: User | null;
+  setUser: (user: User | null) => void;
+}
+
+const UserContext = createContext<UserContextType | undefined>(undefined);
+
+const UserProfile: React.FC = () => {
+  const context = useContext(UserContext);
+  
+  if (!context) {
+    throw new Error('UserProfile must be used within UserProvider');
+  }
+  
+  const { user } = context;
+  
+  return user ? (
+    <p>Welcome, {user.name}! ({user.email})</p>
+  ) : (
+    <p>Please log in</p>
+  );
 };
 ```
 
-#### Example 3: Language Context
+#### Example 3: Language Context with Enum
 ```typescript
-const LanguageContext = createContext('en');
+enum Language {
+  EN = 'en',
+  ES = 'es',
+  FR = 'fr'
+}
 
-const Greeting = () => {
-  const lang = useContext(LanguageContext);
-  const greetings = { en: 'Hello', es: 'Hola', fr: 'Bonjour' };
-  return <h1>{greetings[lang]}</h1>;
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+}
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+const Greeting: React.FC = () => {
+  const context = useContext(LanguageContext);
+  
+  if (!context) return null;
+  
+  const { language } = context;
+  const greetings: Record<Language, string> = {
+    [Language.EN]: 'Hello',
+    [Language.ES]: 'Hola',
+    [Language.FR]: 'Bonjour'
+  };
+  
+  return <h1>{greetings[language]}</h1>;
 };
 ```
 
-#### Example 4: Settings Context
+#### Example 4: Settings Context with Complex State
 ```typescript
-const SettingsContext = createContext({ notifications: true });
+interface AppSettings {
+  notifications: boolean;
+  darkMode: boolean;
+  language: string;
+  fontSize: number;
+}
 
-const NotificationBell = () => {
-  const { notifications } = useContext(SettingsContext);
-  return notifications ? <span>🔔</span> : <span>🔕</span>;
+interface SettingsContextType {
+  settings: AppSettings;
+  updateSetting: <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => void;
+}
+
+const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
+
+const NotificationToggle: React.FC = () => {
+  const context = useContext(SettingsContext);
+  
+  if (!context) return null;
+  
+  const { settings, updateSetting } = context;
+  
+  return (
+    <label>
+      <input
+        type="checkbox"
+        checked={settings.notifications}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+          updateSetting('notifications', e.target.checked)
+        }
+      />
+      Enable Notifications
+    </label>
+  );
 };
 ```
 
@@ -252,7 +533,31 @@ The `useReducer` Hook is an alternative to `useState` for managing complex state
 
 ### Syntax
 ```typescript
-const [state, dispatch] = useReducer(reducer, initialState);
+const [state, dispatch] = useReducer<StateType, ActionType>(reducer, initialState);
+```
+
+### TypeScript Reducer Pattern
+```typescript
+// Define state interface
+interface State {
+  // state properties
+}
+
+// Define action types with discriminated unions
+type Action = 
+  | { type: 'ACTION_ONE'; payload?: any }
+  | { type: 'ACTION_TWO'; payload: any }
+  | { type: 'ACTION_THREE' };
+
+// Typed reducer function
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'ACTION_ONE':
+      return { ...state, /* updates */ };
+    default:
+      return state;
+  }
+};
 ```
 
 ### Four Small Examples
@@ -668,19 +973,414 @@ const UserSettings = () => {
 
 ---
 
-## Hook Best Practices
+## Hook Best Practices with Examples
 
-1. **Always use Hooks at the top level** - Never inside loops, conditions, or nested functions
-2. **Use ESLint plugin** - Install `eslint-plugin-react-hooks` for Hook rules enforcement
-3. **Optimize with useMemo and useCallback** - But don't overuse them; measure performance first
-4. **Create custom Hooks** - Extract reusable stateful logic into custom Hooks
-5. **Use TypeScript** - Add proper typing for better development experience
-6. **Clean up effects** - Always clean up subscriptions, timers, and event listeners
-7. **Dependency arrays** - Be careful with dependency arrays in useEffect, useMemo, and useCallback
+### 1. Always Call Hooks at the Top Level
 
-## Common Pitfalls
+#### ❌ Bad Practice - Conditional Hooks
+```typescript
+const BadComponent = ({ condition }: { condition: boolean }) => {
+  const [count, setCount] = useState(0);
+  
+  // DON'T DO THIS - Hook inside condition
+  if (condition) {
+    const [name, setName] = useState(''); // ❌ Breaks hook rules
+  }
+  
+  // DON'T DO THIS - Hook inside loop
+  for (let i = 0; i < 3; i++) {
+    const [value, setValue] = useState(i); // ❌ Breaks hook rules
+  }
+  
+  return <div>Count: {count}</div>;
+};
+```
 
-1. **Missing dependencies** - Always include all values from component scope used inside the effect
-2. **Infinite loops** - Be careful with object/array dependencies that are recreated on every render
-3. **Stale closures** - When using callbacks in effects, ensure they have access to latest values
-4. **Overusing useMemo/useCallback** - These have their own overhead; use only when necessary
+#### ✅ Good Practice - Hooks at Top Level
+```typescript
+const GoodComponent = ({ condition }: { condition: boolean }) => {
+  const [count, setCount] = useState(0);
+  const [name, setName] = useState(''); // ✅ Always called
+  const [values, setValues] = useState([0, 1, 2]); // ✅ Use array for multiple values
+  
+  return (
+    <div>
+      <p>Count: {count}</p>
+      {condition && <p>Name: {name}</p>}
+      {values.map((value, i) => <span key={i}>{value}</span>)}
+    </div>
+  );
+};
+```
+
+### 2. useEffect Dependencies
+
+#### ❌ Bad Practice - Missing Dependencies
+```typescript
+const BadEffectComponent = ({ userId }: { userId: number }) => {
+  const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
+  
+  // ❌ Missing userId in dependencies
+  useEffect(() => {
+    fetchUser(userId).then(setUser);
+  }, []); // Will only run once, ignoring userId changes
+  
+  // ❌ Missing user in dependencies
+  useEffect(() => {
+    if (user) {
+      fetchUserPosts(user.id).then(setPosts);
+    }
+  }, []); // Won't update when user changes
+  
+  return <div>{user?.name}</div>;
+};
+```
+
+#### ✅ Good Practice - Correct Dependencies
+```typescript
+const GoodEffectComponent = ({ userId }: { userId: number }) => {
+  const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
+  
+  // ✅ Include userId in dependencies
+  useEffect(() => {
+    fetchUser(userId).then(setUser);
+  }, [userId]); // Runs when userId changes
+  
+  // ✅ Include user in dependencies
+  useEffect(() => {
+    if (user) {
+      fetchUserPosts(user.id).then(setPosts);
+    }
+  }, [user]); // Runs when user changes
+  
+  return <div>{user?.name}</div>;
+};
+```
+
+### 3. State Updates
+
+#### ❌ Bad Practice - Direct State Mutation
+```typescript
+const BadStateComponent = () => {
+  const [items, setItems] = useState([{ id: 1, name: 'Item 1' }]);
+  const [user, setUser] = useState({ name: 'John', age: 30 });
+  
+  const addItem = () => {
+    // ❌ Mutating state directly
+    items.push({ id: 2, name: 'Item 2' });
+    setItems(items); // Won't trigger re-render
+  };
+  
+  const updateUser = () => {
+    // ❌ Mutating object directly
+    user.age = 31;
+    setUser(user); // Won't trigger re-render
+  };
+  
+  return <div>{items.length} items</div>;
+};
+```
+
+#### ✅ Good Practice - Immutable Updates
+```typescript
+const GoodStateComponent = () => {
+  const [items, setItems] = useState([{ id: 1, name: 'Item 1' }]);
+  const [user, setUser] = useState({ name: 'John', age: 30 });
+  
+  const addItem = () => {
+    // ✅ Create new array
+    setItems([...items, { id: 2, name: 'Item 2' }]);
+  };
+  
+  const updateUser = () => {
+    // ✅ Create new object
+    setUser({ ...user, age: 31 });
+  };
+  
+  return <div>{items.length} items</div>;
+};
+```
+
+### 4. useCallback and useMemo Usage
+
+#### ❌ Bad Practice - Overusing Memoization
+```typescript
+const BadMemoComponent = ({ items }: { items: string[] }) => {
+  // ❌ Unnecessary memoization for simple values
+  const count = useMemo(() => items.length, [items]);
+  
+  // ❌ Memoizing every function
+  const handleClick = useCallback(() => {
+    console.log('clicked');
+  }, []); // No dependencies needed, but adds overhead
+  
+  // ❌ Memoizing cheap calculations
+  const doubled = useMemo(() => count * 2, [count]);
+  
+  return <div onClick={handleClick}>{doubled}</div>;
+};
+```
+
+#### ✅ Good Practice - Strategic Memoization
+```typescript
+const GoodMemoComponent = ({ items, onItemClick }: { 
+  items: string[]; 
+  onItemClick: (item: string) => void; 
+}) => {
+  // ✅ Simple calculation, no memoization needed
+  const count = items.length;
+  
+  // ✅ Memoize expensive calculations
+  const expensiveValue = useMemo(() => {
+    return items.reduce((acc, item) => {
+      // Expensive operation
+      return acc + item.split('').reverse().join('');
+    }, '');
+  }, [items]);
+  
+  // ✅ Memoize when passing to child components
+  const handleItemClick = useCallback((item: string) => {
+    onItemClick(item);
+  }, [onItemClick]);
+  
+  return (
+    <div>
+      {items.map(item => (
+        <ExpensiveChildComponent 
+          key={item} 
+          item={item} 
+          onClick={handleItemClick} 
+        />
+      ))}
+    </div>
+  );
+};
+```
+
+### 5. Custom Hooks
+
+#### ❌ Bad Practice - Not Extracting Reusable Logic
+```typescript
+const BadComponent1 = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    setLoading(true);
+    fetch('/api/users')
+      .then(res => res.json())
+      .then(setData)
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, []);
+  
+  return <div>{loading ? 'Loading...' : data?.length}</div>;
+};
+
+const BadComponent2 = () => {
+  // ❌ Duplicating the same logic
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    setLoading(true);
+    fetch('/api/posts')
+      .then(res => res.json())
+      .then(setData)
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, []);
+  
+  return <div>{loading ? 'Loading...' : data?.length}</div>;
+};
+```
+
+#### ✅ Good Practice - Custom Hook for Reusable Logic
+```typescript
+// ✅ Extract common logic into custom hook
+const useFetch = <T>(url: string) => {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    
+    fetch(url)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch');
+        return res.json();
+      })
+      .then(setData)
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [url]);
+  
+  return { data, loading, error };
+};
+
+const GoodComponent1 = () => {
+  const { data, loading, error } = useFetch('/api/users');
+  
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  
+  return <div>{data?.length} users</div>;
+};
+
+const GoodComponent2 = () => {
+  const { data, loading, error } = useFetch('/api/posts');
+  
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  
+  return <div>{data?.length} posts</div>;
+};
+```
+
+### 6. Effect Cleanup
+
+#### ❌ Bad Practice - No Cleanup
+```typescript
+const BadCleanupComponent = () => {
+  const [count, setCount] = useState(0);
+  
+  useEffect(() => {
+    // ❌ No cleanup for interval
+    setInterval(() => {
+      setCount(c => c + 1);
+    }, 1000);
+  }, []);
+  
+  useEffect(() => {
+    // ❌ No cleanup for event listener
+    const handleResize = () => console.log('resized');
+    window.addEventListener('resize', handleResize);
+  }, []);
+  
+  return <div>Count: {count}</div>;
+};
+```
+
+#### ✅ Good Practice - Proper Cleanup
+```typescript
+const GoodCleanupComponent = () => {
+  const [count, setCount] = useState(0);
+  
+  useEffect(() => {
+    // ✅ Cleanup interval
+    const interval = setInterval(() => {
+      setCount(c => c + 1);
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  useEffect(() => {
+    // ✅ Cleanup event listener
+    const handleResize = () => console.log('resized');
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
+  return <div>Count: {count}</div>;
+};
+```
+
+### 7. State Structure
+
+#### ❌ Bad Practice - Over-separated State
+```typescript
+const BadStateStructure = () => {
+  // ❌ Too many separate states for related data
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [age, setAge] = useState(0);
+  const [isValid, setIsValid] = useState(false);
+  const [errors, setErrors] = useState([]);
+  
+  // Complex logic to keep all states in sync
+  const updateFirstName = (name: string) => {
+    setFirstName(name);
+    validateForm(name, lastName, email, age);
+  };
+  
+  return <form>...</form>;
+};
+```
+
+#### ✅ Good Practice - Grouped Related State
+```typescript
+const GoodStateStructure = () => {
+  // ✅ Group related state together
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    age: 0
+  });
+  
+  const [formState, setFormState] = useState({
+    isValid: false,
+    errors: []
+  });
+  
+  const updateField = (field: string, value: any) => {
+    const newData = { ...formData, [field]: value };
+    setFormData(newData);
+    validateForm(newData);
+  };
+  
+  return <form>...</form>;
+};
+```
+
+## TypeScript Benefits Summary
+
+### Why Use TypeScript with React Hooks?
+
+1. **Type Safety** - Catch errors at compile time, not runtime
+2. **IntelliSense** - Better autocomplete and code suggestions
+3. **Refactoring** - Safe renaming and code restructuring
+4. **Documentation** - Types serve as inline documentation
+5. **Team Collaboration** - Clear contracts between components
+6. **Error Prevention** - Prevent common mistakes like wrong prop types
+
+### Essential TypeScript Patterns for Hooks
+
+```typescript
+// 1. Interface for component props
+interface ComponentProps {
+  title: string;
+  count?: number; // Optional prop
+  onUpdate: (value: string) => void; // Function prop
+}
+
+// 2. Generic custom hooks
+const useApi = <T>(url: string): { data: T | null; loading: boolean } => {
+  // Implementation
+};
+
+// 3. Event handler typing
+const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+  // Implementation
+};
+
+// 4. State with union types
+type Status = 'idle' | 'loading' | 'success' | 'error';
+const [status, setStatus] = useState<Status>('idle');
+
+// 5. Context with proper typing
+interface ContextType {
+  value: string;
+  setValue: (value: string) => void;
+}
+const MyContext = createContext<ContextType | undefined>(undefined);
+```

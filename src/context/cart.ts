@@ -5,7 +5,7 @@ export interface CartItem extends Product {
   quantity: number;
 }
 
-export export interface CartState {
+export interface CartState {
   items: CartItem[];
   total: number;
   itemCount: number;

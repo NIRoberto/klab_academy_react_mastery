@@ -1,4 +1,4 @@
-import { useCart } from '../context/CartContext';
+import { useCart } from '../hooks/useCart';
 import { ShoppingCart, Plus, Minus, X, Leaf } from 'lucide-react';
 
 interface CartProps {
