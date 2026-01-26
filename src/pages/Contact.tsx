@@ -36,65 +36,65 @@ const Contact = () => {
   };
 
   return (
-    <div className="page-container">
-      <div className="container">
-        <section className="contact-section">
-          <h1 className="page-title">Contact Us</h1>
+    <div className="min-h-screen bg-orange-50 py-8 px-4">
+      <div className="max-w-6xl mx-auto">
+        <section>
+          <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">Contact Us</h1>
           
-          <div className="contact-content">
-            <div className="contact-info">
-              <h2>Get in Touch</h2>
-              <p>
+          <div className="grid lg:grid-cols-2 gap-12">
+            <div>
+              <h2 className="text-2xl font-semibold mb-4 text-gray-900">Get in Touch</h2>
+              <p className="text-gray-600 mb-8">
                 Have questions about our desserts or need help with your order? 
                 We'd love to hear from you!
               </p>
               
-              <div className="contact-details">
-                <div className="contact-item">
-                  <MapPin size={20} />
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <MapPin size={20} className="text-red-600 mt-1 flex-shrink-0" />
                   <div>
-                    <h3>Address</h3>
-                    <p>123 Sweet Street<br />Dessert District, DD 12345</p>
+                    <h3 className="text-lg font-semibold mb-1 text-gray-900">Address</h3>
+                    <p className="text-gray-600">123 Sweet Street<br />Dessert District, DD 12345</p>
                   </div>
                 </div>
                 
-                <div className="contact-item">
-                  <Phone size={20} />
+                <div className="flex items-start gap-4">
+                  <Phone size={20} className="text-red-600 mt-1 flex-shrink-0" />
                   <div>
-                    <h3>Phone</h3>
-                    <p>+1 (555) 123-CAKE</p>
+                    <h3 className="text-lg font-semibold mb-1 text-gray-900">Phone</h3>
+                    <p className="text-gray-600">+1 (555) 123-CAKE</p>
                   </div>
                 </div>
                 
-                <div className="contact-item">
-                  <Mail size={20} />
+                <div className="flex items-start gap-4">
+                  <Mail size={20} className="text-red-600 mt-1 flex-shrink-0" />
                   <div>
-                    <h3>Email</h3>
-                    <p>hello@dessertshop.com</p>
+                    <h3 className="text-lg font-semibold mb-1 text-gray-900">Email</h3>
+                    <p className="text-gray-600">hello@dessertshop.com</p>
                   </div>
                 </div>
                 
-                <div className="contact-item">
-                  <Clock size={20} />
+                <div className="flex items-start gap-4">
+                  <Clock size={20} className="text-red-600 mt-1 flex-shrink-0" />
                   <div>
-                    <h3>Hours</h3>
-                    <p>Mon-Sat: 8AM - 8PM<br />Sunday: 10AM - 6PM</p>
+                    <h3 className="text-lg font-semibold mb-1 text-gray-900">Hours</h3>
+                    <p className="text-gray-600">Mon-Sat: 8AM - 8PM<br />Sunday: 10AM - 6PM</p>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="contact-form-container">
+            <div className="bg-white p-8 rounded-xl shadow-lg">
               {isSubmitted ? (
-                <div className="success-message">
-                  <CheckCircle size={48} color="#22c55e" />
-                  <h3>Message Sent!</h3>
-                  <p>Thank you for contacting us. We'll get back to you soon!</p>
+                <div className="text-center py-8">
+                  <CheckCircle size={48} className="mx-auto mb-4 text-green-500" />
+                  <h3 className="text-xl font-semibold text-green-600 mb-2">Message Sent!</h3>
+                  <p className="text-gray-600">Thank you for contacting us. We'll get back to you soon!</p>
                 </div>
               ) : (
-                <form className="contact-form" onSubmit={handleSubmit}>
-                  <div className="form-group">
-                    <label htmlFor="name">Name *</label>
+                <form className="space-y-6" onSubmit={handleSubmit}>
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">Name *</label>
                     <input
                       type="text"
                       id="name"
@@ -102,12 +102,12 @@ const Contact = () => {
                       value={form.name}
                       onChange={handleChange}
                       required
-                      className="form-input"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                     />
                   </div>
                   
-                  <div className="form-group">
-                    <label htmlFor="email">Email *</label>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
                     <input
                       type="email"
                       id="email"
@@ -115,12 +115,12 @@ const Contact = () => {
                       value={form.email}
                       onChange={handleChange}
                       required
-                      className="form-input"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                     />
                   </div>
                   
-                  <div className="form-group">
-                    <label htmlFor="message">Message *</label>
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">Message *</label>
                     <textarea
                       id="message"
                       name="message"
@@ -128,13 +128,13 @@ const Contact = () => {
                       onChange={handleChange}
                       required
                       rows={5}
-                      className="form-textarea"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors resize-vertical"
                     />
                   </div>
                   
                   <button 
                     type="submit" 
-                    className="submit-btn"
+                    className="w-full flex items-center justify-center gap-2 bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={isSubmitting}
                   >
                     <Send size={16} />

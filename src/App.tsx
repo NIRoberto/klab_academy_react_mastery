@@ -5,15 +5,15 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
-import NavigationBar from "./components/Navigationbar";
+import NavigationBar from "./shared/components/Navigationbar";
 
 function App() {
   return (
     <BrowserRouter>
       <CartProvider>
-        <div className="app">
+        <div className="min-h-screen bg-orange-50">
           <NavigationBar />
-          
+
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
