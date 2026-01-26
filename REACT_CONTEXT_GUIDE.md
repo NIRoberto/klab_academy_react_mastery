@@ -79,6 +79,16 @@ function UserProfile() {
 
 ### 1. Counter Context (Beginner Level)
 
+**What it does:** Manages a simple counter state that can be shared across multiple components without prop drilling.
+
+**Why it's useful:** Perfect for learning Context basics. Shows how to share simple state (a number) and functions to modify it across components that aren't directly connected.
+
+**Key concepts learned:**
+- Basic Context creation and provider setup
+- Custom hooks for consuming context
+- Simple state management with useState
+- Error handling for context usage outside provider
+
 #### Basic State Sharing:
 ```tsx
 // context/CounterContext.tsx
@@ -161,6 +171,16 @@ function App() {
 
 ### 2. Theme Context (Beginner Level)
 
+**What it does:** Manages application-wide theme state (light/dark mode) and provides theme switching functionality.
+
+**Why it's useful:** Demonstrates how Context can control global UI appearance. Every component can access the current theme without passing props through multiple levels.
+
+**Key concepts learned:**
+- Global UI state management
+- Theme switching patterns
+- Conditional rendering based on context state
+- Provider wrapping with additional JSX (div with className)
+
 #### Simple Theme Switching:
 ```tsx
 // context/ThemeContext.tsx
@@ -232,6 +252,17 @@ function Content() {
 ```
 
 ### 3. Todo List Context (Intermediate Level)
+
+**What it does:** Manages a list of todo items with full CRUD operations (Create, Read, Update, Delete).
+
+**Why it's useful:** Shows how to manage complex state (arrays of objects) in Context. Demonstrates multiple state operations and how different components can interact with the same data.
+
+**Key concepts learned:**
+- Array state management with immutable updates
+- Multiple context functions for different operations
+- Working with object arrays in state
+- ID generation and item filtering
+- Complex state updates (toggle, filter, map)
 
 #### Managing a List of Items:
 ```tsx
