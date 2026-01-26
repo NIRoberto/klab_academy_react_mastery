@@ -395,6 +395,17 @@ function TodoList() {
 
 ### 4. Language Context (Intermediate Level)
 
+**What it does:** Provides internationalization (i18n) functionality by managing the current language and providing translation functions.
+
+**Why it's useful:** Demonstrates how Context can handle computed values and object lookups. Shows how to create utility functions within context that components can use.
+
+**Key concepts learned:**
+- Object-based state management
+- Computed values and helper functions in context
+- Translation patterns and internationalization
+- Type-safe key lookups with TypeScript
+- Context as a service layer
+
 #### Internationalization (i18n) Example:
 ```tsx
 // context/LanguageContext.tsx
@@ -495,6 +506,18 @@ function Greeting({ name }: { name: string }) {
 ```
 
 ### 5. Modal Context (Advanced Level)
+
+**What it does:** Manages multiple modals globally, allowing any component to open/close modals without managing modal state locally.
+
+**Why it's useful:** Shows advanced Context patterns including dynamic content rendering, multiple items management, and provider-level UI rendering. Demonstrates how Context can manage complex UI state.
+
+**Key concepts learned:**
+- Managing arrays of complex objects
+- Dynamic content rendering with ReactNode
+- Provider-level UI rendering (modals rendered in provider)
+- Callback handling and cleanup
+- Advanced state operations (find, filter, forEach)
+- Event handling and propagation
 
 #### Global Modal Management:
 ```tsx
