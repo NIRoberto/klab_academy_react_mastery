@@ -1,4 +1,4 @@
-# React Context API Guide for E-commerce Applications
+# React Context API Guide 
 
 ## Table of Contents
 1. [What is React Context?](#what-is-react-context)
