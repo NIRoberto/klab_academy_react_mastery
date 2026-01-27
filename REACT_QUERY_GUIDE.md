@@ -117,77 +117,93 @@ function App() {
 }
 ```
 
+### What is Axios?
+
+**Axios** is a popular HTTP client library for JavaScript that makes API requests easier and more powerful than the native `fetch()` API.
+
+**Why use Axios over fetch()?**
+- **Automatic JSON parsing**: No need to call `.json()` on responses
+- **Request/Response interceptors**: Global handling of auth tokens and errors
+- **Request timeout**: Built-in timeout configuration
+- **Better error handling**: Cleaner error objects and status code handling
+- **Request cancellation**: Easy to cancel requests
+- **Wide browser support**: Works in older browsers
+
 ### Axios Global Configuration
 
 **Why configure Axios globally?**
 Configuring Axios globally allows you to set default settings like base URL, headers, interceptors, and timeouts that will be applied to all requests throughout your application.
 
-#### Step 1: Create Axios Instance
+#### Step 1: Basic Axios Instance
 
 ```tsx
 // services/api.ts
 import axios from 'axios';
 
-// Create an Axios instance with default configuration
+// Create a basic Axios instance
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
-  timeout: 10000, // 10 seconds timeout
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor - runs before every request
+export default api;
+```
+
+#### Step 2: Authentication Setup
+
+```tsx
+// services/auth.ts
+import api from './api';
+
+// Add request interceptor for authentication
 api.interceptors.request.use(
   (config) => {
-    // Add auth token to requests if available
     const token = localStorage.getItem('authToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
-    // Log request for debugging (remove in production)
-    console.log('🚀 Request:', config.method?.toUpperCase(), config.url);
-    
     return config;
   },
-  (error) => {
-    console.error('❌ Request Error:', error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor - runs after every response
+// Handle auth errors
 api.interceptors.response.use(
-  (response) => {
-    // Log successful responses (remove in production)
-    console.log('✅ Response:', response.status, response.config.url);
-    return response;
-  },
+  (response) => response,
   (error) => {
-    // Handle common errors globally
     if (error.response?.status === 401) {
-      // Unauthorized - redirect to login
       localStorage.removeItem('authToken');
       window.location.href = '/login';
-    } else if (error.response?.status === 403) {
-      // Forbidden - show error message
-      console.error('❌ Access denied');
-    } else if (error.response?.status >= 500) {
-      // Server error
-      console.error('❌ Server error:', error.response.status);
     }
-    
-    console.error('❌ Response Error:', error.response?.status, error.config?.url);
     return Promise.reject(error);
   }
 );
-
-// Export the configured instance
-export default api;
 ```
 
-#### Step 2: Create API Service Functions
+#### Step 3: Authorization & Error Handling
+
+```tsx
+// services/errorHandler.ts
+import api from './api';
+
+// Add response interceptor for authorization and errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 403) {
+      console.error('Access denied');
+    } else if (error.response?.status >= 500) {
+      console.error('Server error');
+    }
+    return Promise.reject(error);
+  }
+);
+```
+
+#### Step 4: Create API Service Functions
 
 ```tsx
 // services/userService.ts
