@@ -84,11 +84,11 @@ cacheTime: 10 * 60 * 1000 // 10 minutes
 
 ## Installation and Setup
 
-### Install React Query
+### Install React Query and Axios
 ```bash
-npm install @tanstack/react-query
+npm install @tanstack/react-query axios
 # or
-yarn add @tanstack/react-query
+yarn add @tanstack/react-query axios
 ```
 
 ### Basic Setup
@@ -118,6 +118,213 @@ function App() {
 }
 ```
 
+### Axios Global Configuration
+
+**Why configure Axios globally?**
+Configuring Axios globally allows you to set default settings like base URL, headers, interceptors, and timeouts that will be applied to all requests throughout your application.
+
+#### Step 1: Create Axios Instance
+
+```tsx
+// services/api.ts
+import axios from 'axios';
+
+// Create an Axios instance with default configuration
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
+  timeout: 10000, // 10 seconds timeout
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Request interceptor - runs before every request
+api.interceptors.request.use(
+  (config) => {
+    // Add auth token to requests if available
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    
+    // Log request for debugging (remove in production)
+    console.log('🚀 Request:', config.method?.toUpperCase(), config.url);
+    
+    return config;
+  },
+  (error) => {
+    console.error('❌ Request Error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor - runs after every response
+api.interceptors.response.use(
+  (response) => {
+    // Log successful responses (remove in production)
+    console.log('✅ Response:', response.status, response.config.url);
+    return response;
+  },
+  (error) => {
+    // Handle common errors globally
+    if (error.response?.status === 401) {
+      // Unauthorized - redirect to login
+      localStorage.removeItem('authToken');
+      window.location.href = '/login';
+    } else if (error.response?.status === 403) {
+      // Forbidden - show error message
+      console.error('❌ Access denied');
+    } else if (error.response?.status >= 500) {
+      // Server error
+      console.error('❌ Server error:', error.response.status);
+    }
+    
+    console.error('❌ Response Error:', error.response?.status, error.config?.url);
+    return Promise.reject(error);
+  }
+);
+
+// Export the configured instance
+export default api;
+```
+
+#### Step 2: Create API Service Functions
+
+```tsx
+// services/userService.ts
+import api from './api';
+
+// User-related API functions using the configured Axios instance
+export const userService = {
+  // GET all users
+  getUsers: async (params?: { search?: string; role?: string }) => {
+    const response = await api.get('/users', { params });
+    return response.data;
+  },
+
+  // GET single user
+  getUser: async (id: string) => {
+    const response = await api.get(`/users/${id}`);
+    return response.data;
+  },
+
+  // POST create user
+  createUser: async (userData: { name: string; email: string; role?: string }) => {
+    const response = await api.post('/users', userData);
+    return response.data;
+  },
+
+  // PUT update user
+  updateUser: async (id: string, userData: Partial<{ name: string; email: string; role: string }>) => {
+    const response = await api.put(`/users/${id}`, userData);
+    return response.data;
+  },
+
+  // DELETE user
+  deleteUser: async (id: string) => {
+    const response = await api.delete(`/users/${id}`);
+    return response.data;
+  },
+};
+```
+
+#### Step 3: Environment Variables Setup
+
+```bash
+# .env file
+REACT_APP_API_URL=http://localhost:3001/api
+REACT_APP_TIMEOUT=10000
+```
+
+#### Step 4: Advanced Configuration with Environment-based Settings
+
+```tsx
+// services/api.ts (Enhanced version)
+import axios from 'axios';
+
+// Configuration based on environment
+const config = {
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
+  timeout: parseInt(process.env.REACT_APP_TIMEOUT || '10000'),
+  headers: {
+    'Content-Type': 'application/json',
+  },
+};
+
+// Create Axios instance
+const api = axios.create(config);
+
+// Add request ID for tracking
+let requestId = 0;
+api.interceptors.request.use((config) => {
+  config.metadata = { requestId: ++requestId, startTime: Date.now() };
+  
+  // Add auth token
+  const token = localStorage.getItem('authToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  
+  return config;
+});
+
+// Enhanced response interceptor with retry logic
+api.interceptors.response.use(
+  (response) => {
+    // Calculate request duration
+    const duration = Date.now() - response.config.metadata.startTime;
+    console.log(`✅ Request ${response.config.metadata.requestId} completed in ${duration}ms`);
+    
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+    
+    // Retry logic for network errors
+    if (!error.response && !originalRequest._retry) {
+      originalRequest._retry = true;
+      console.log('🔄 Retrying request due to network error...');
+      return api(originalRequest);
+    }
+    
+    // Handle 401 errors (token refresh)
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      
+      try {
+        // Try to refresh token
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (refreshToken) {
+          const response = await axios.post('/auth/refresh', { refreshToken });
+          const newToken = response.data.accessToken;
+          
+          localStorage.setItem('authToken', newToken);
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        // Refresh failed, redirect to login
+        localStorage.clear();
+        window.location.href = '/login';
+      }
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+```
+
+**Key Benefits of Global Axios Configuration:**
+- **Centralized configuration**: All API settings in one place
+- **Automatic authentication**: Token automatically added to all requests
+- **Error handling**: Global error handling for common scenarios
+- **Request/Response logging**: Easy debugging and monitoring
+- **Retry logic**: Automatic retry for failed requests
+- **Token refresh**: Automatic token refresh on 401 errors
+
 ## Basic Syntax and Usage
 
 ### 1. useQuery - Fetching Data
@@ -129,20 +336,21 @@ The `useQuery` hook is used to fetch data from an API. It automatically handles 
 
 ```tsx
 import { useQuery } from '@tanstack/react-query';
+import api from '../services/api'; // Import our configured Axios instance
 
-// Step 1: Create an API function
+// Step 1: Create an API function using our configured Axios instance
 // This is a regular async function that fetches data
 const fetchUsers = async () => {
-  const response = await fetch('/api/users');
+  // Using our configured api instance (includes baseURL, auth headers, etc.)
+  const response = await api.get('/users');
   
-  // Always check if the request was successful
-  if (!response.ok) {
-    throw new Error('Failed to fetch users');
-  }
-  
-  // Return the JSON data
-  return response.json();
+  // Axios automatically parses JSON, so we just return response.data
+  return response.data;
 };
+
+// Alternative: Use the service function we created
+// import { userService } from '../services/userService';
+// const fetchUsers = () => userService.getUsers();
 
 // Step 2: Use the query in your component
 function UsersList() {
@@ -181,20 +389,26 @@ function UsersList() {
 - **queryFn**: The function that actually fetches your data
 - **Automatic re-fetching**: React Query will automatically refetch when the component mounts, window refocuses, etc.
 - **Caching**: If you use the same queryKey elsewhere, React Query will return cached data instantly
+- **Axios benefits**: Automatic JSON parsing, built-in error handling, and cleaner syntax
 
 #### Query with Parameters
 
 **When to use:** When you need to fetch data based on dynamic values (like user ID, search terms, etc.)
 
 ```tsx
+import api from '../services/api'; // Import our configured Axios instance
+// Or use the service function:
+// import { userService } from '../services/userService';
+
 // Step 1: API function that accepts parameters
 const fetchUser = async (userId: string) => {
-  const response = await fetch(`/api/users/${userId}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch user');
-  }
-  return response.json();
+  // Using our configured api instance
+  const response = await api.get(`/users/${userId}`);
+  return response.data;
 };
+
+// Alternative using service function:
+// const fetchUser = (userId: string) => userService.getUser(userId);
 
 function UserProfile({ userId }: { userId: string }) {
   const { data: user, isLoading, isError } = useQuery({
@@ -229,21 +443,22 @@ The `useMutation` hook is used for operations that change data on the server (PO
 
 ```tsx
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import api from '../services/api'; // Import our configured Axios instance
+// Or use the service function:
+// import { userService } from '../services/userService';
 
-// Step 1: Create a function that modifies data
+// Step 1: Create a function that modifies data using our configured Axios instance
 const createUser = async (userData: { name: string; email: string }) => {
-  const response = await fetch('/api/users', {
-    method: 'POST',                                    // HTTP method for creating
-    headers: { 'Content-Type': 'application/json' },  // Tell server we're sending JSON
-    body: JSON.stringify(userData),                   // Convert data to JSON string
-  });
+  // Using our configured api instance (includes auth headers, baseURL, etc.)
+  const response = await api.post('/users', userData);
   
-  if (!response.ok) {
-    throw new Error('Failed to create user');
-  }
-  
-  return response.json();  // Return the created user
+  // Axios automatically parses the response JSON
+  return response.data;  // Return the created user
 };
+
+// Alternative using service function:
+// const createUser = (userData: { name: string; email: string }) => 
+//   userService.createUser(userData);
 
 function CreateUserForm() {
   // Get access to the query client (for cache management)
@@ -325,11 +540,15 @@ function CreateUserForm() {
 This hook is perfect for "Load More" buttons or infinite scrolling. It manages multiple pages of data and provides functions to fetch the next page.
 
 ```tsx
-// Step 1: API function that accepts page parameter
+import api from '../services/api'; // Import our configured Axios instance
+
+// Step 1: API function that accepts page parameter using our configured Axios instance
 const fetchUsers = async ({ pageParam = 1 }) => {
   // pageParam is automatically passed by React Query
-  const response = await fetch(`/api/users?page=${pageParam}&limit=10`);
-  return response.json();
+  const response = await api.get(`/users?page=${pageParam}&limit=10`);
+  
+  // Axios automatically parses JSON, return the data
+  return response.data;
   
   // Expected API response format:
   // {
@@ -427,13 +646,11 @@ function InfiniteUsersList() {
 ### 1. Optimistic Updates
 
 ```tsx
+import axios from 'axios';
+
 const updateUser = async ({ id, ...userData }) => {
-  const response = await fetch(`/api/users/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(userData),
-  });
-  return response.json();
+  const response = await axios.put(`/api/users/${id}`, userData);
+  return response.data;
 };
 
 function useUpdateUser() {
