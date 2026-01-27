@@ -6,9 +6,8 @@
 3. [Installation and Setup](#installation-and-setup)
 4. [Basic Syntax and Usage](#basic-syntax-and-usage)
 5. [Advanced Features](#advanced-features)
-6. [Integration with Context API](#integration-with-context-api)
-7. [Reusable CRUD Hooks](#reusable-crud-hooks)
-8. [Best Practices](#best-practices)
+6. [Reusable CRUD Hooks](#reusable-crud-hooks)
+7. [Best Practices](#best-practices)
 
 ## What is React Query?
 
@@ -707,126 +706,6 @@ function UserPosts({ userId }: { userId: string }) {
       ))}
     </div>
   );
-}
-```
-
-## Integration with Context API
-
-### Creating a Query Context
-
-```tsx
-// context/QueryContext.tsx
-import { createContext, useContext, ReactNode } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
-interface QueryContextType {
-  queryClient: QueryClient;
-}
-
-const QueryContext = createContext<QueryContextType | undefined>(undefined);
-
-// Create query client with custom configuration
-const createQueryClient = () => new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      cacheTime: 10 * 60 * 1000, // 10 minutes
-      retry: (failureCount, error: any) => {
-        // Don't retry on 4xx errors
-        if (error?.status >= 400 && error?.status < 500) {
-          return false;
-        }
-        return failureCount < 3;
-      },
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: true,
-    },
-    mutations: {
-      retry: 1,
-    },
-  },
-});
-
-export function QueryProvider({ children }: { children: ReactNode }) {
-  const queryClient = createQueryClient();
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <QueryContext.Provider value={{ queryClient }}>
-        {children}
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryContext.Provider>
-    </QueryClientProvider>
-  );
-}
-
-export function useQueryContext() {
-  const context = useContext(QueryContext);
-  if (!context) {
-    throw new Error('useQueryContext must be used within a QueryProvider');
-  }
-  return context;
-}
-```
-
-### API Context for Centralized Configuration
-
-```tsx
-// context/ApiContext.tsx
-import { createContext, useContext, ReactNode } from 'react';
-
-interface ApiConfig {
-  baseURL: string;
-  headers: Record<string, string>;
-}
-
-interface ApiContextType {
-  config: ApiConfig;
-  updateConfig: (newConfig: Partial<ApiConfig>) => void;
-}
-
-const ApiContext = createContext<ApiContextType | undefined>(undefined);
-
-export function ApiProvider({ children }: { children: ReactNode }) {
-  const [config, setConfig] = useState<ApiConfig>({
-    baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  const updateConfig = (newConfig: Partial<ApiConfig>) => {
-    setConfig(prev => ({ ...prev, ...newConfig }));
-  };
-
-  // Update headers when auth token changes
-  useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      setConfig(prev => ({
-        ...prev,
-        headers: {
-          ...prev.headers,
-          Authorization: `Bearer ${token}`,
-        },
-      }));
-    }
-  }, []);
-
-  return (
-    <ApiContext.Provider value={{ config, updateConfig }}>
-      {children}
-    </ApiContext.Provider>
-  );
-}
-
-export function useApi() {
-  const context = useContext(ApiContext);
-  if (!context) {
-    throw new Error('useApi must be used within an ApiProvider');
-  }
-  return context;
 }
 ```
 
