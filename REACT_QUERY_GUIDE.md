@@ -203,42 +203,266 @@ api.interceptors.response.use(
 );
 ```
 
-#### Step 4: Create API Service Functions
+#### Step 4: API Service Functions with TypeScript
 
 ```tsx
+// types/api.ts
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role?: string;
+  createdAt: string;
+}
+
+export interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  status: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 // services/userService.ts
 import api from './api';
+import type { User, ApiResponse, PaginatedResponse } from '../types/api';
 
-// User-related API functions using the configured Axios instance
+interface UserFilters {
+  search?: string;
+  role?: string;
+  page?: number;
+  limit?: number;
+}
+
 export const userService = {
-  // GET all users
-  getUsers: async (params?: { search?: string; role?: string }) => {
-    const response = await api.get('/users', { params });
+  // GET all users with proper typing
+  getUsers: async (params?: UserFilters): Promise<PaginatedResponse<User>> => {
+    const response = await api.get<PaginatedResponse<User>>('/users', { params });
     return response.data;
   },
 
   // GET single user
-  getUser: async (id: string) => {
-    const response = await api.get(`/users/${id}`);
-    return response.data;
+  getUser: async (id: string): Promise<User> => {
+    const response = await api.get<ApiResponse<User>>(`/users/${id}`);
+    return response.data.data;
   },
 
   // POST create user
-  createUser: async (userData: { name: string; email: string; role?: string }) => {
-    const response = await api.post('/users', userData);
-    return response.data;
+  createUser: async (userData: Omit<User, 'id' | 'createdAt'>): Promise<User> => {
+    const response = await api.post<ApiResponse<User>>('/users', userData);
+    return response.data.data;
   },
 
   // PUT update user
-  updateUser: async (id: string, userData: Partial<{ name: string; email: string; role: string }>) => {
-    const response = await api.put(`/users/${id}`, userData);
-    return response.data;
+  updateUser: async (id: string, userData: Partial<Omit<User, 'id'>>): Promise<User> => {
+    const response = await api.put<ApiResponse<User>>(`/users/${id}`, userData);
+    return response.data.data;
   },
 
   // DELETE user
-  deleteUser: async (id: string) => {
-    const response = await api.delete(`/users/${id}`);
+  deleteUser: async (id: string): Promise<void> => {
+    await api.delete(`/users/${id}`);
+  },
+};
+```
+
+#### Step 5: Complete API Services Examples
+
+```tsx
+// types/api.ts
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'user' | 'moderator';
+  avatar?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  slug: string;
+  parentId?: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  categoryId: string;
+  images: string[];
+  stock: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  avatar?: string;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+// services/authService.ts
+import api from './api';
+import type { AuthUser, LoginCredentials, RegisterData, ApiResponse } from '../types/api';
+
+export const authService = {
+  // Login
+  login: async (credentials: LoginCredentials): Promise<{ user: AuthUser; token: string }> => {
+    const response = await api.post<ApiResponse<{ user: AuthUser; token: string }>>('/auth/login', credentials);
+    return response.data.data;
+  },
+
+  // Register
+  register: async (userData: RegisterData): Promise<{ user: AuthUser; token: string }> => {
+    const response = await api.post<ApiResponse<{ user: AuthUser; token: string }>>('/auth/register', userData);
+    return response.data.data;
+  },
+
+  // Get current user
+  getCurrentUser: async (): Promise<AuthUser> => {
+    const response = await api.get<ApiResponse<AuthUser>>('/auth/me');
+    return response.data.data;
+  },
+
+  // Logout
+  logout: async (): Promise<void> => {
+    await api.post('/auth/logout');
+  },
+
+  // Refresh token
+  refreshToken: async (): Promise<{ token: string }> => {
+    const response = await api.post<ApiResponse<{ token: string }>>('/auth/refresh');
+    return response.data.data;
+  },
+};
+
+// services/categoryService.ts
+import api from './api';
+import type { Category, ApiResponse, PaginatedResponse } from '../types/api';
+
+interface CategoryFilters {
+  search?: string;
+  parentId?: string;
+  isActive?: boolean;
+  page?: number;
+  limit?: number;
+}
+
+export const categoryService = {
+  // GET all categories
+  getCategories: async (params?: CategoryFilters): Promise<PaginatedResponse<Category>> => {
+    const response = await api.get<PaginatedResponse<Category>>('/categories', { params });
     return response.data;
+  },
+
+  // GET single category
+  getCategory: async (id: string): Promise<Category> => {
+    const response = await api.get<ApiResponse<Category>>(`/categories/${id}`);
+    return response.data.data;
+  },
+
+  // POST create category
+  createCategory: async (categoryData: Omit<Category, 'id' | 'createdAt'>): Promise<Category> => {
+    const response = await api.post<ApiResponse<Category>>('/categories', categoryData);
+    return response.data.data;
+  },
+
+  // PUT update category
+  updateCategory: async (id: string, categoryData: Partial<Omit<Category, 'id'>>): Promise<Category> => {
+    const response = await api.put<ApiResponse<Category>>(`/categories/${id}`, categoryData);
+    return response.data.data;
+  },
+
+  // DELETE category
+  deleteCategory: async (id: string): Promise<void> => {
+    await api.delete(`/categories/${id}`);
+  },
+};
+
+// services/productService.ts
+import api from './api';
+import type { Product, ApiResponse, PaginatedResponse } from '../types/api';
+
+interface ProductFilters {
+  search?: string;
+  categoryId?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  isActive?: boolean;
+  page?: number;
+  limit?: number;
+}
+
+export const productService = {
+  // GET all products
+  getProducts: async (params?: ProductFilters): Promise<PaginatedResponse<Product>> => {
+    const response = await api.get<PaginatedResponse<Product>>('/products', { params });
+    return response.data;
+  },
+
+  // GET single product
+  getProduct: async (id: string): Promise<Product> => {
+    const response = await api.get<ApiResponse<Product>>(`/products/${id}`);
+    return response.data.data;
+  },
+
+  // GET products by category
+  getProductsByCategory: async (categoryId: string): Promise<Product[]> => {
+    const response = await api.get<ApiResponse<Product[]>>(`/categories/${categoryId}/products`);
+    return response.data.data;
+  },
+
+  // POST create product
+  createProduct: async (productData: Omit<Product, 'id' | 'createdAt'>): Promise<Product> => {
+    const response = await api.post<ApiResponse<Product>>('/products', productData);
+    return response.data.data;
+  },
+
+  // PUT update product
+  updateProduct: async (id: string, productData: Partial<Omit<Product, 'id'>>): Promise<Product> => {
+    const response = await api.put<ApiResponse<Product>>(`/products/${id}`, productData);
+    return response.data.data;
+  },
+
+  // DELETE product
+  deleteProduct: async (id: string): Promise<void> => {
+    await api.delete(`/products/${id}`);
+  },
+
+  // Upload product images
+  uploadImages: async (id: string, files: File[]): Promise<Product> => {
+    const formData = new FormData();
+    files.forEach(file => formData.append('images', file));
+    const response = await api.post<ApiResponse<Product>>(`/products/${id}/images`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data.data;
   },
 };
 ```
