@@ -136,11 +136,15 @@ Configuring Axios globally allows you to set default settings like base URL, hea
 
 #### Step 1: Basic Axios Instance
 
+**What this does:** Creates a basic HTTP client that all your API calls will use.
+**Why it's useful:** Instead of writing the full URL every time, you just write the endpoint.
+
+**For Create React App (CRA):**
 ```tsx
 // services/api.ts
 import axios from 'axios';
 
-// Create a basic Axios instance
+// Create a basic Axios instance for CRA
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
   timeout: 10000,
@@ -152,7 +156,53 @@ const api = axios.create({
 export default api;
 ```
 
+**For Vite:**
+```tsx
+// services/api.ts
+import axios from 'axios';
+
+// Create a basic Axios instance for Vite
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+export default api;
+```
+
+**Environment Variables Setup:**
+
+**For Create React App (.env file):**
+```bash
+# .env
+REACT_APP_API_URL=http://localhost:3001/api
+REACT_APP_TIMEOUT=10000
+```
+
+**For Vite (.env file):**
+```bash
+# .env
+VITE_API_URL=http://localhost:3001/api
+VITE_TIMEOUT=10000
+```
+
+**Simple explanation:**
+- **CRA**: Uses `process.env.REACT_APP_*` for environment variables
+- **Vite**: Uses `import.meta.env.VITE_*` for environment variables
+- `baseURL`: The beginning part of all your API URLs
+- `timeout`: How long to wait before giving up on a request (10 seconds)
+- `headers`: Tell the server we're sending JSON data
+
+**Before:** `fetch('http://localhost:3001/api/users')`
+**After:** `api.get('/users')` ✨
+
 #### Step 2: Authentication Setup
+
+**What this does:** Automatically adds your login token to every request so you don't have to remember.
+**Why it's useful:** Once a user logs in, all API calls will include their authentication automatically.
 
 ```tsx
 // services/auth.ts
@@ -183,7 +233,20 @@ api.interceptors.response.use(
 );
 ```
 
+**Simple explanation:**
+- **Request interceptor**: Runs before every API call and adds the user's token
+- **Response interceptor**: Checks if the server says "you're not logged in" (401 error)
+- **Auto-redirect**: If token is invalid, automatically sends user to login page
+
+**What happens:**
+1. User logs in → token saved to localStorage
+2. User makes API call → token automatically added
+3. Server rejects token → user automatically redirected to login
+
 #### Step 3: Authorization & Error Handling
+
+**What this does:** Handles different types of errors that can happen when talking to your server.
+**Why it's useful:** Instead of handling errors in every component, handle them once globally.
 
 ```tsx
 // services/errorHandler.ts
@@ -203,7 +266,21 @@ api.interceptors.response.use(
 );
 ```
 
+**Simple explanation:**
+- **403 error**: "You don't have permission" (like trying to delete someone else's post)
+- **500+ errors**: "Server is broken" (database down, server crash, etc.)
+- **Global handling**: All errors are caught and handled in one place
+
+**Error codes explained:**
+- `401`: "Who are you?" (not logged in)
+- `403`: "I know who you are, but you can't do that" (no permission)
+- `404`: "That thing doesn't exist" (page/data not found)
+- `500`: "Something broke on our end" (server error)
+
 #### Step 4: API Service Functions with TypeScript
+
+**What this does:** Creates reusable functions for talking to your server with proper type safety.
+**Why it's useful:** Instead of writing API calls everywhere, write them once and reuse them.
 
 ```tsx
 // types/api.ts
@@ -271,7 +348,29 @@ export const userService = {
 };
 ```
 
+**Simple explanation:**
+- **Interfaces**: Like blueprints that describe what your data looks like
+- **Generic types**: `<T>` means "this can work with any type of data"
+- **Omit**: "Take this type but remove these fields" (for creating new items)
+- **Partial**: "All fields are optional" (for updating existing items)
+
+**TypeScript benefits:**
+- **Autocomplete**: Your editor knows what fields exist
+- **Error catching**: Typos are caught before running code
+- **Documentation**: Types serve as built-in documentation
+
+**Usage example:**
+```tsx
+// TypeScript knows this returns a User object
+const user = await userService.getUser('123');
+console.log(user.name); // ✅ TypeScript knows 'name' exists
+console.log(user.age);  // ❌ TypeScript error: 'age' doesn't exist
+```
+
 #### Step 5: Complete API Services Examples
+
+**What this does:** Shows you complete, real-world examples for different types of data (users, products, categories, auth).
+**Why it's useful:** Copy-paste ready code that you can use in actual projects.
 
 ```tsx
 // types/api.ts
@@ -465,6 +564,47 @@ export const productService = {
     return response.data.data;
   },
 };
+```
+
+**Simple explanation:**
+
+**Auth Service** - Handle user login/logout:
+- `login()`: User signs in with email/password
+- `register()`: Create new user account
+- `getCurrentUser()`: Get info about logged-in user
+- `logout()`: Sign user out
+- `refreshToken()`: Get new token when old one expires
+
+**Category Service** - Organize products into groups:
+- `getCategories()`: List all categories (with search/filter)
+- `getCategory()`: Get one specific category
+- `createCategory()`: Add new category
+- `updateCategory()`: Edit existing category
+- `deleteCategory()`: Remove category
+
+**Product Service** - Manage your products:
+- `getProducts()`: List products (with search, price filter, etc.)
+- `getProduct()`: Get one specific product
+- `getProductsByCategory()`: Products in a specific category
+- `createProduct()`: Add new product
+- `updateProduct()`: Edit existing product
+- `deleteProduct()`: Remove product
+- `uploadImages()`: Add photos to product
+
+**Real-world usage:**
+```tsx
+// Login a user
+const { user, token } = await authService.login({ email: 'john@example.com', password: '123456' });
+
+// Get products under $50
+const cheapProducts = await productService.getProducts({ maxPrice: 50 });
+
+// Create a new category
+const newCategory = await categoryService.createCategory({
+  name: 'Electronics',
+  slug: 'electronics',
+  isActive: true
+});
 ```
 
 #### Step 3: Environment Variables Setup
