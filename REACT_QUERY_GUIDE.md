@@ -362,6 +362,24 @@ export const userService = {
   deleteUser: async (id: string): Promise<void> => {
     await api.delete(`/users/${id}`);
   },
+
+  // Protected endpoints - require authentication
+  // GET current user profile (protected)
+  getCurrentUserProfile: async (): Promise<User> => {
+    const response = await api.get<ApiResponse<User>>('/users/me');
+    return response.data.data;
+  },
+
+  // GET admin dashboard data (protected - admin only)
+  getAdminDashboard: async (): Promise<any> => {
+    const response = await api.get<ApiResponse<any>>('/admin/dashboard');
+    return response.data.data;
+  },
+
+  // PUT change password (protected)
+  changePassword: async (passwordData: { currentPassword: string; newPassword: string }): Promise<void> => {
+    await api.put('/users/change-password', passwordData);
+  },
 };
 ```
 
@@ -382,6 +400,64 @@ export const userService = {
 const user = await userService.getUser('123');
 console.log(user.name); // ✅ TypeScript knows 'name' exists
 console.log(user.age);  // ❌ TypeScript error: 'age' doesn't exist
+```
+
+**Protected Endpoints Example:**
+```tsx
+// These endpoints require authentication (token automatically added by interceptor)
+
+// Get current user's profile
+const currentUser = await userService.getCurrentUserProfile();
+
+// Admin-only endpoint (will return 403 if user is not admin)
+try {
+  const dashboardData = await userService.getAdminDashboard();
+  console.log('Admin dashboard:', dashboardData);
+} catch (error) {
+  if (error.response?.status === 403) {
+    console.log('Access denied: Admin privileges required');
+  }
+}
+
+// Change password (requires current password)
+await userService.changePassword({
+  currentPassword: 'oldPassword123',
+  newPassword: 'newPassword456'
+});
+```
+
+**How Protected Endpoints Work:**
+1. **Automatic Authentication**: Token is automatically added by the request interceptor
+2. **No Manual Headers**: You don't need to manually add Authorization headers
+3. **Error Handling**: 401/403 errors are handled globally
+4. **Role-Based Access**: Server checks user permissions and returns appropriate errors
+
+**What the server receives in headers:**
+```bash
+# When you call: userService.getCurrentUserProfile()
+# The server receives these headers:
+
+GET /users/me HTTP/1.1
+Host: localhost:3001
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# The token is automatically added by the interceptor:
+# config.headers.Authorization = `Bearer ${token}`;
+```
+
+**Token Flow:**
+```tsx
+// 1. User logs in and token is saved
+const { user, token } = await authService.login({ email, password });
+localStorage.setItem(AUTH_TOKEN_KEY, token); // Save: "eyJhbGciOiJIUzI1NiIs..."
+
+// 2. Later, when making protected API calls:
+const profile = await userService.getCurrentUserProfile();
+// ↓ Interceptor automatically adds:
+// headers: { Authorization: "Bearer eyJhbGciOiJIUzI1NiIs..." }
+
+// 3. Server validates token and returns data or error
 ```
 
 #### Step 5: Complete API Services Examples
