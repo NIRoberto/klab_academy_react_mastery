@@ -205,13 +205,17 @@ VITE_TIMEOUT=10000
 **Why it's useful:** Once a user logs in, all API calls will include their authentication automatically.
 
 ```tsx
+// constants/auth.ts
+export const AUTH_TOKEN_KEY = 'authToken';
+
 // services/auth.ts
 import api from './api';
+import { AUTH_TOKEN_KEY } from '../constants/auth';
 
 // Add request interceptor for authentication
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -225,7 +229,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('authToken');
+      localStorage.removeItem(AUTH_TOKEN_KEY);
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -234,14 +238,27 @@ api.interceptors.response.use(
 ```
 
 **Simple explanation:**
+- **AUTH_TOKEN_KEY**: Common constant to avoid typos and make token key reusable
 - **Request interceptor**: Runs before every API call and adds the user's token
 - **Response interceptor**: Checks if the server says "you're not logged in" (401 error)
 - **Auto-redirect**: If token is invalid, automatically sends user to login page
 
 **What happens:**
-1. User logs in → token saved to localStorage
+1. User logs in → token saved to localStorage with AUTH_TOKEN_KEY
 2. User makes API call → token automatically added
 3. Server rejects token → user automatically redirected to login
+
+**Usage in other files:**
+```tsx
+// Login component
+import { AUTH_TOKEN_KEY } from '../constants/auth';
+
+// Save token after login
+localStorage.setItem(AUTH_TOKEN_KEY, token);
+
+// Check if user is logged in
+const isLoggedIn = !!localStorage.getItem(AUTH_TOKEN_KEY);
+```
 
 #### Step 3: Authorization & Error Handling
 
@@ -606,103 +623,6 @@ const newCategory = await categoryService.createCategory({
   isActive: true
 });
 ```
-
-#### Step 3: Environment Variables Setup
-
-```bash
-# .env file
-REACT_APP_API_URL=http://localhost:3001/api
-REACT_APP_TIMEOUT=10000
-```
-
-#### Step 4: Advanced Configuration with Environment-based Settings
-
-```tsx
-// services/api.ts (Enhanced version)
-import axios from 'axios';
-
-// Configuration based on environment
-const config = {
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
-  timeout: parseInt(process.env.REACT_APP_TIMEOUT || '10000'),
-  headers: {
-    'Content-Type': 'application/json',
-  },
-};
-
-// Create Axios instance
-const api = axios.create(config);
-
-// Add request ID for tracking
-let requestId = 0;
-api.interceptors.request.use((config) => {
-  config.metadata = { requestId: ++requestId, startTime: Date.now() };
-  
-  // Add auth token
-  const token = localStorage.getItem('authToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  
-  return config;
-});
-
-// Enhanced response interceptor with retry logic
-api.interceptors.response.use(
-  (response) => {
-    // Calculate request duration
-    const duration = Date.now() - response.config.metadata.startTime;
-    console.log(`✅ Request ${response.config.metadata.requestId} completed in ${duration}ms`);
-    
-    return response;
-  },
-  async (error) => {
-    const originalRequest = error.config;
-    
-    // Retry logic for network errors
-    if (!error.response && !originalRequest._retry) {
-      originalRequest._retry = true;
-      console.log('🔄 Retrying request due to network error...');
-      return api(originalRequest);
-    }
-    
-    // Handle 401 errors (token refresh)
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      
-      try {
-        // Try to refresh token
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (refreshToken) {
-          const response = await axios.post('/auth/refresh', { refreshToken });
-          const newToken = response.data.accessToken;
-          
-          localStorage.setItem('authToken', newToken);
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
-          
-          return api(originalRequest);
-        }
-      } catch (refreshError) {
-        // Refresh failed, redirect to login
-        localStorage.clear();
-        window.location.href = '/login';
-      }
-    }
-    
-    return Promise.reject(error);
-  }
-);
-
-export default api;
-```
-
-**Key Benefits of Global Axios Configuration:**
-- **Centralized configuration**: All API settings in one place
-- **Automatic authentication**: Token automatically added to all requests
-- **Error handling**: Global error handling for common scenarios
-- **Request/Response logging**: Easy debugging and monitoring
-- **Retry logic**: Automatic retry for failed requests
-- **Token refresh**: Automatic token refresh on 401 errors
 
 ## Basic Syntax and Usage
 
