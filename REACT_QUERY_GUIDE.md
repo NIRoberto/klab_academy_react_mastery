@@ -446,18 +446,108 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 # config.headers.Authorization = `Bearer ${token}`;
 ```
 
-**Token Flow:**
+**Token Storage: localStorage vs Cookies**
+
+**Option 1: localStorage (Common but Less Secure)**
 ```tsx
-// 1. User logs in and token is saved
+// After login - save token to localStorage
 const { user, token } = await authService.login({ email, password });
-localStorage.setItem(AUTH_TOKEN_KEY, token); // Save: "eyJhbGciOiJIUzI1NiIs..."
+localStorage.setItem(AUTH_TOKEN_KEY, token);
 
-// 2. Later, when making protected API calls:
-const profile = await userService.getCurrentUserProfile();
-// ↓ Interceptor automatically adds:
-// headers: { Authorization: "Bearer eyJhbGciOiJIUzI1NiIs..." }
+// Interceptor reads from localStorage
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem(AUTH_TOKEN_KEY);
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-// 3. Server validates token and returns data or error
+// Logout - remove from localStorage
+const handleLogout = () => {
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+  window.location.href = '/login';
+};
+```
+
+**Option 2: HTTP-Only Cookies (More Secure - RECOMMENDED)**
+```tsx
+// services/api.ts - Cookie-based authentication
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
+  timeout: 10000,
+  withCredentials: true, // Important: sends cookies automatically
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// No need for request interceptor - cookies sent automatically
+// Server sets cookie on login:
+// Set-Cookie: authToken=eyJhbGciOiJIUzI1NiIs...; HttpOnly; Secure; SameSite=Strict
+
+// Login service (cookie-based)
+export const authService = {
+  login: async (credentials: LoginCredentials): Promise<AuthUser> => {
+    // Server sets HTTP-only cookie automatically
+    const response = await api.post<ApiResponse<AuthUser>>('/auth/login', credentials);
+    return response.data.data; // Only return user, not token
+  },
+
+  logout: async (): Promise<void> => {
+    // Server clears the cookie
+    await api.post('/auth/logout');
+  },
+};
+```
+
+**Why Cookies are More Secure:**
+
+| Feature | localStorage | HTTP-Only Cookies |
+|---------|-------------|-------------------|
+| **XSS Protection** | ❌ Accessible to JavaScript | ✅ Not accessible to JavaScript |
+| **CSRF Protection** | ✅ Not sent automatically | ⚠️ Needs CSRF tokens |
+| **Automatic Sending** | ❌ Manual header required | ✅ Sent automatically |
+| **Storage Location** | 📱 Client-side | 🔒 Client-side (secure) |
+| **Expiration** | ❌ Manual management | ✅ Server-controlled |
+
+**Security Comparison:**
+
+```tsx
+// ❌ localStorage - Vulnerable to XSS attacks
+// Malicious script can access:
+console.log(localStorage.getItem('authToken')); // Gets your token!
+
+// ✅ HTTP-Only Cookies - Protected from XSS
+// Malicious script CANNOT access:
+console.log(document.cookie); // Won't show HTTP-only cookies
+```
+
+**Why HTTP-Only Cookies are Important:**
+
+1. **XSS Protection**: Even if malicious JavaScript runs on your site, it can't steal the authentication cookie
+2. **Automatic Management**: Browser handles sending cookies automatically
+3. **Server Control**: Server can set expiration, security flags, and domain restrictions
+4. **Industry Standard**: Used by major platforms (Google, Facebook, etc.)
+
+**Cookie Security Flags:**
+```bash
+# Server sets secure cookie (backend code)
+Set-Cookie: authToken=abc123; 
+  HttpOnly;        # Prevents JavaScript access
+  Secure;          # Only sent over HTTPS
+  SameSite=Strict; # Prevents CSRF attacks
+  Max-Age=86400;   # Expires in 24 hours
+  Path=/;          # Available for entire site
+```
+
+**Implementation Choice:**
+```tsx
+// For learning/development: localStorage is easier
+const token = localStorage.getItem(AUTH_TOKEN_KEY);
+
+// For production: HTTP-only cookies are more secure
+const api = axios.create({ withCredentials: true });
 ```
 
 #### Step 5: Complete API Services Examples
