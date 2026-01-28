@@ -801,21 +801,10 @@ The `useQuery` hook is used to fetch data from an API. It automatically handles 
 
 ```tsx
 import { useQuery } from '@tanstack/react-query';
-import api from '../services/api'; // Import our configured Axios instance
+import { userService } from '../services/userService'; // Import our service
 
-// Step 1: Create an API function using our configured Axios instance
-// This is a regular async function that fetches data
-const fetchUsers = async () => {
-  // Using our configured api instance (includes baseURL, auth headers, etc.)
-  const response = await api.get('/users');
-  
-  // Axios automatically parses JSON, so we just return response.data
-  return response.data;
-};
-
-// Alternative: Use the service function we created
-// import { userService } from '../services/userService';
-// const fetchUsers = () => userService.getUsers();
+// Step 1: Use the service function we created
+// No need to create separate API functions - use the service directly
 
 // Step 2: Use the query in your component
 function UsersList() {
@@ -826,8 +815,8 @@ function UsersList() {
     error,              // The actual error object
     isSuccess           // True when data was fetched successfully
   } = useQuery({
-    queryKey: ['users'],    // Unique identifier for this query (used for caching)
-    queryFn: fetchUsers,    // The function that fetches the data
+    queryKey: ['users'],                    // Unique identifier for this query (used for caching)
+    queryFn: () => userService.getUsers(),  // Use our service function
   });
 
   // Step 3: Handle different states
@@ -841,7 +830,7 @@ function UsersList() {
   // Show the data when everything is successful
   return (
     <ul>
-      {users?.map(user => (
+      {users?.data.map(user => (
         <li key={user.id}>{user.name}</li>
       ))}
     </ul>
@@ -861,25 +850,13 @@ function UsersList() {
 **When to use:** When you need to fetch data based on dynamic values (like user ID, search terms, etc.)
 
 ```tsx
-import api from '../services/api'; // Import our configured Axios instance
-// Or use the service function:
-// import { userService } from '../services/userService';
-
-// Step 1: API function that accepts parameters
-const fetchUser = async (userId: string) => {
-  // Using our configured api instance
-  const response = await api.get(`/users/${userId}`);
-  return response.data;
-};
-
-// Alternative using service function:
-// const fetchUser = (userId: string) => userService.getUser(userId);
+import { userService } from '../services/userService'; // Import our service
 
 function UserProfile({ userId }: { userId: string }) {
   const { data: user, isLoading, isError } = useQuery({
-    queryKey: ['users', userId],        // Include the parameter in the key
-    queryFn: () => fetchUser(userId),   // Pass the parameter to your function
-    enabled: !!userId,                  // Only run the query if userId exists
+    queryKey: ['users', userId],                      // Include the parameter in the key
+    queryFn: () => userService.getUser(userId),       // Use our service function
+    enabled: !!userId,                                // Only run the query if userId exists
   });
 
   if (isLoading) return <div>Loading user...</div>;
@@ -908,44 +885,29 @@ The `useMutation` hook is used for operations that change data on the server (PO
 
 ```tsx
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../services/api'; // Import our configured Axios instance
-// Or use the service function:
-// import { userService } from '../services/userService';
-
-// Step 1: Create a function that modifies data using our configured Axios instance
-const createUser = async (userData: { name: string; email: string }) => {
-  // Using our configured api instance (includes auth headers, baseURL, etc.)
-  const response = await api.post('/users', userData);
-  
-  // Axios automatically parses the response JSON
-  return response.data;  // Return the created user
-};
-
-// Alternative using service function:
-// const createUser = (userData: { name: string; email: string }) => 
-//   userService.createUser(userData);
+import { userService } from '../services/userService'; // Import our service
 
 function CreateUserForm() {
   // Get access to the query client (for cache management)
   const queryClient = useQueryClient();
   
-  // Step 2: Set up the mutation
+  // Step 1: Set up the mutation using our service
   const mutation = useMutation({
-    mutationFn: createUser,           // The function that creates the user
+    mutationFn: userService.createUser,           // Use our service function directly
     
-    // Step 3: Handle success
+    // Step 2: Handle success
     onSuccess: () => {
       // Invalidate the users list so it refetches with the new user
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
     
-    // Step 4: Handle errors
+    // Step 3: Handle errors
     onError: (error) => {
       console.error('Error creating user:', error);
     },
   });
 
-  // Step 5: Handle form submission
+  // Step 4: Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -954,6 +916,7 @@ function CreateUserForm() {
     mutation.mutate({
       name: formData.get('name') as string,
       email: formData.get('email') as string,
+      role: 'user', // Default role
     });
   };
 
@@ -962,19 +925,19 @@ function CreateUserForm() {
       <input name="name" placeholder="Name" required />
       <input name="email" type="email" placeholder="Email" required />
       
-      {/* Step 6: Show different button states */}
+      {/* Step 5: Show different button states */}
       <button type="submit" disabled={mutation.isPending}>
         {mutation.isPending ? 'Creating...' : 'Create User'}
       </button>
       
-      {/* Step 7: Show error messages */}
+      {/* Step 6: Show error messages */}
       {mutation.isError && (
         <div style={{ color: 'red' }}>
           Error: {mutation.error?.message}
         </div>
       )}
       
-      {/* Step 8: Show success messages */}
+      {/* Step 7: Show success messages */}
       {mutation.isSuccess && (
         <div style={{ color: 'green' }}>
           User created successfully!
@@ -1005,22 +968,23 @@ function CreateUserForm() {
 This hook is perfect for "Load More" buttons or infinite scrolling. It manages multiple pages of data and provides functions to fetch the next page.
 
 ```tsx
-import api from '../services/api'; // Import our configured Axios instance
+import { userService } from '../services/userService'; // Import our service
 
-// Step 1: API function that accepts page parameter using our configured Axios instance
+// Step 1: Use our service function for pagination
 const fetchUsers = async ({ pageParam = 1 }) => {
   // pageParam is automatically passed by React Query
-  const response = await api.get(`/users?page=${pageParam}&limit=10`);
+  const response = await userService.getUsers({ page: pageParam, limit: 10 });
   
-  // Axios automatically parses JSON, return the data
-  return response.data;
+  // Return the paginated response
+  return response;
   
-  // Expected API response format:
+  // Expected service response format:
   // {
-  //   users: [...],     // Array of users for this page
-  //   hasMore: true,    // Whether there are more pages
-  //   currentPage: 1,   // Current page number
-  //   totalPages: 5     // Total number of pages
+  //   data: [...],      // Array of users for this page
+  //   total: 100,       // Total number of users
+  //   page: 1,          // Current page number
+  //   limit: 10,        // Items per page
+  //   totalPages: 10    // Total number of pages
   // }
 };
 
@@ -1038,7 +1002,7 @@ function InfiniteUsersList() {
     // Step 2: Tell React Query how to get the next page
     getNextPageParam: (lastPage, pages) => {
       // Return the next page number, or undefined if no more pages
-      return lastPage.hasMore ? pages.length + 1 : undefined;
+      return lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined;
     },
   });
 
@@ -1050,7 +1014,7 @@ function InfiniteUsersList() {
       {/* Step 3: Render all pages */}
       {data?.pages.map((page, pageIndex) => (
         <div key={pageIndex}>
-          {page.users.map(user => (
+          {page.data.map(user => (
             <div key={user.id} style={{ padding: '10px', border: '1px solid #ccc', margin: '5px' }}>
               <h3>{user.name}</h3>
               <p>{user.email}</p>
